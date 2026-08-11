@@ -1,0 +1,50 @@
+name: Feature request
+description: Propose a focused improvement to the offline pre-publication CLI.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        OpenReady is intentionally a small, offline, read-only CLI. Describe the user problem before the proposed implementation, and do not include private repository data.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What publication-readiness problem cannot be handled well today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe inputs, findings, severity, and expected exit-code behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include existing tools or a documentation-only solution where relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy and security impact
+      description: Explain filesystem, network, output-redaction, symlink, and maintenance implications.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope confirmation
+      options:
+        - label: This request does not rely on invented usage data or include real private material.
+          required: true
+        - label: I understand that cloud services, telemetry, AI, and plugin systems are outside the v0.1 scope.
+          required: true

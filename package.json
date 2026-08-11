@@ -1,0 +1,35 @@
+{
+  "name": "openready",
+  "version": "0.1.0",
+  "description": "Offline pre-publication hygiene checks for Git repositories.",
+  "author": "Yinuo Bian",
+  "type": "module",
+  "bin": {
+    "openready": "./bin/openready.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/boundaries.test.js test/cli.test.js test/rules.test.js",
+    "scan": "node ./bin/openready.js scan ."
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "beta-testing.md"
+  ],
+  "keywords": [
+    "git",
+    "privacy",
+    "security",
+    "open-source",
+    "cli"
+  ],
+  "license": "MIT"
+}

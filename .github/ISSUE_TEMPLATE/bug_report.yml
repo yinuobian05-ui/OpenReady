@@ -1,0 +1,66 @@
+name: Bug report
+description: Report a reproducible OpenReady defect using synthetic, redacted data only.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste credentials, private repository content, full logs, personal information, or unredacted paths. Use the smallest synthetic reproduction possible. Security-sensitive reports belong in the private channel described in SECURITY.md once that channel is configured.
+
+  - type: input
+    id: version
+    attributes:
+      label: OpenReady version
+      placeholder: 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system and Node.js major version only.
+      placeholder: Linux, Node.js 20
+    validations:
+      required: true
+
+  - type: dropdown
+    id: repository_type
+    attributes:
+      label: Scan target type
+      options:
+        - Git repository
+        - Non-Git directory
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal synthetic reproduction
+      description: Include commands and generated fictional files only. Do not attach a real repository.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include rule IDs and exit codes. Redact paths and values.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed all real credentials, personal information, private code, private paths, and full logs from this report.
+          required: true

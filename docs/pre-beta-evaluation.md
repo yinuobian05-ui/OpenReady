@@ -1,4 +1,4 @@
-# Synthetic AI pre-beta evaluation
+# Synthetic AI pre-release evaluation
 
 Date: 2026-08-11
 
@@ -33,7 +33,7 @@ All repositories and values used by these roles were temporary synthetic fixture
 - Runtime measurements from automated fixtures are not evidence that a first-time human can finish in five minutes.
 - Source-checkout and globally installed command forms must remain visibly separate so a first-time user does not copy a command that is not installed.
 
-These points are now explained in the README or retained as limits. They should be checked again with real participants.
+These points are now explained in the README or retained as limits. They may be checked later if genuine volunteers become available, but human beta is not a v0.1.0 release prerequisite.
 
 ## Verification status
 
@@ -65,26 +65,26 @@ cmp test/.tmp/self-1.json test/.tmp/self-2.json
 The test suite includes a byte-for-byte repeated JSON scan. To repeat the temporary package-consumer check manually:
 
 ```sh
-mkdir -p test/.tmp/pre-beta-consumer
-npm pack --ignore-scripts --pack-destination test/.tmp/pre-beta-consumer
-cd test/.tmp/pre-beta-consumer
+mkdir -p test/.tmp/pre-release-consumer
+npm pack --ignore-scripts --pack-destination test/.tmp/pre-release-consumer
+cd test/.tmp/pre-release-consumer
 npm init --yes
 npm install --ignore-scripts --no-audit --no-fund --no-save ./openready-0.1.0.tgz
 node ./node_modules/openready/bin/openready.js --version
 node ./node_modules/openready/bin/openready.js scan ../../.. --json
 ```
 
-After returning to the repository root, delete only `test/.tmp/pre-beta-consumer`, `test/.tmp/self-1.json`, and `test/.tmp/self-2.json`. These generated artifacts are disposable and are not part of the release package.
+After returning to the repository root, delete only `test/.tmp/pre-release-consumer`, `test/.tmp/self-1.json`, and `test/.tmp/self-2.json`. These generated artifacts are disposable and are not part of the release package.
 
 ## Allowed claim
 
-> OpenReady has undergone synthetic adversarial and automation pre-beta checks, and the resulting defects have regression tests.
+> OpenReady has undergone synthetic adversarial and automation pre-release checks, and the resulting defects have regression tests.
 
-## Claims that are not allowed yet
+## Claims not supported by current evidence
 
 - “Beta tested by three users”
 - “Validated by developers”
 - “First scan completed in under five minutes”
 - Any claim about users, downloads, stars, testimonials, public issues, adoption, or production reliability
 
-Those statements require real, recorded evidence under [the beta testing plan](../beta-testing.md).
+Those statements require real, recorded evidence under [the optional human testing template](../beta-testing.md). Skipping human beta does not permit making them.

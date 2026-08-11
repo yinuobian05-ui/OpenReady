@@ -8,7 +8,7 @@ It has zero runtime dependencies, sends no telemetry, and never prints a matched
 
 ## Quick start: first scan
 
-This path is designed to take less than five minutes, but real beta timing has not yet been collected.
+This quick start has a design target of under five minutes. Human testing is intentionally skipped for v0.1.0, so no timing result is claimed.
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
@@ -151,10 +151,10 @@ node ./bin/openready.js scan . --json
 
 Tests use Node's built-in test runner and generate only clearly fictional fixtures inside `test/.tmp`. No runtime package is installed.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECURITY.md](SECURITY.md) for safe reporting, and [beta-testing.md](beta-testing.md) for the real-user testing plan.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECURITY.md](SECURITY.md) for safe reporting, and [beta-testing.md](beta-testing.md) for an optional future real-user feedback template.
 
 ## Project status
 
-Version `0.1.0` is a local release candidate maintained by Yinuo Bian (`@yinuobian05-ui`). It has been committed locally, but it has not been pushed, published, or released. Public usage, users, downloads, stars, issues, and reviews have not yet occurred and are not claimed.
+Version `0.1.0` is a local release candidate maintained by Yinuo Bian (`@yinuobian05-ui`). It has been committed locally, but it has not been pushed, published, or released. Human beta testing is intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. Public usage, users, downloads, stars, issues, and reviews have not occurred and are not claimed.
 
 Licensed under the MIT License.

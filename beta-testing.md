@@ -1,12 +1,12 @@
-# OpenReady beta testing plan
+# Optional human beta testing
 
 ## Current status
 
-Beta testing has not started. No participants, public users, downloads, stars, reviews, public issues, or usage metrics are claimed. This file is a plan and evidence template, not a record of completed testing.
+Human beta testing is intentionally skipped for the v0.1.0 release candidate and is not a release prerequisite. No human beta runs, participants, public users, downloads, stars, reviews, public issues, or usage metrics are claimed. This file is retained only as an optional future evidence template.
 
-The target is 3–5 friends who are developers or regularly use Git. Each participant must run the tool on a repository they are permitted to inspect and give feedback based on that real run.
+If genuine volunteers become available later, a useful optional target is 3–5 people who are developers or regularly use Git. Each participant must run the tool on a repository they are permitted to inspect and give feedback based on that real run. Do not recruit or invent participants merely to fill this template.
 
-Three independent AI roles have performed a synthetic pre-beta evaluation of the CLI contract and generated fixtures. That work is documented in [docs/pre-beta-evaluation.md](docs/pre-beta-evaluation.md), but it is not human usability evidence and does not count toward the 3–5 real runs.
+Three independent AI roles performed a synthetic pre-release evaluation of the CLI contract and generated fixtures. That work is documented in [docs/pre-beta-evaluation.md](docs/pre-beta-evaluation.md), but it is not human usability evidence and does not count as a beta run.
 
 ## Safety rules
 
@@ -17,7 +17,7 @@ Three independent AI roles have performed a synthetic pre-beta evaluation of the
 - A star, review, or public issue is never a condition of testing. Any star must be a voluntary action after genuine use.
 - Do not create fake participants, issues, testimonials, timing data, fixes, releases, or metrics.
 
-## Test script
+## Optional future test script
 
 1. Confirm Node.js 20 or newer with `node --version`.
 2. From the OpenReady source checkout, run `node ./bin/openready.js scan <repository>`.
@@ -27,9 +27,9 @@ Three independent AI roles have performed a synthetic pre-beta evaluation of the
 6. Note false positives, suspected false negatives, confusing wording, slow behavior, and any boundary failure.
 7. Share only the completed template below with private details removed.
 
-## One-run feedback template
+## Optional one-run feedback template
 
-Copy one section per real participant. Leave fields blank until the run occurs.
+Copy one section per real participant only if an optional real run occurs.
 
 ```text
 Participant alias chosen by participant:
@@ -56,11 +56,11 @@ Consent to quote feedback publicly: yes / no
 
 ## Evidence register
 
-Do not add a row until a real run has occurred.
+Do not add a participant row unless an optional real run actually occurs.
 
 | Run | Date | Environment | First scan completed | Feedback recorded | Follow-up |
 | --- | --- | --- | --- | --- | --- |
-| _No runs yet_ |  |  |  |  |  |
+| _0 — intentionally skipped for v0.1.0_ |  |  |  |  |  |
 
 ## Maintenance loop
 
@@ -78,7 +78,7 @@ For each actionable result:
 
 | Signal | Current evidence |
 | --- | --- |
-| Real beta runs | Not yet occurred |
+| Real beta runs | Intentionally skipped for v0.1.0; 0 runs |
 | Public users | Not yet occurred |
 | Downloads | Not yet occurred |
 | Stars | Not yet occurred |

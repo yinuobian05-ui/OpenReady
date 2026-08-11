@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "Offline pre-publication hygiene checks for Git repositories.",
   "author": "Yinuo Bian",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yinuobian05-ui/OpenReady.git"
+  },
+  "homepage": "https://github.com/yinuobian05-ui/OpenReady#readme",
+  "bugs": {
+    "url": "https://github.com/yinuobian05-ui/OpenReady/issues"
+  },
   "type": "module",
   "bin": {
     "openready": "./bin/openready.js"

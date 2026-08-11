@@ -4,15 +4,13 @@ OpenReady processes repositories that may contain sensitive material. Its output
 
 ## Supported versions
 
-`0.1.x` is the current development line. No public release has occurred yet. Security fixes will be documented in the changelog and release notes when a release process exists.
+`0.1.x` is the current development line. The repository is public, but no tagged release or npm publication has occurred yet. Security fixes will be documented in the changelog and release notes.
 
 ## Reporting a vulnerability
 
 Do not place a real credential, private key, personal email, private repository, full log, or unredacted scan output in a public issue.
 
-GitHub Private Vulnerability Reporting is the selected disclosure channel. Once the repository is hosted publicly, use the repository's **Security** tab and choose **Report a vulnerability**. The maintainer must enable that feature before public release.
-
-No public private-reporting channel is active while this project remains local. Until the GitHub feature is enabled, do not open a public issue or publish a proof of concept containing sensitive data. Report only through a private channel already agreed with the maintainer.
+GitHub Private Vulnerability Reporting is enabled. Use the repository's **Security** tab and choose **Report a vulnerability**, or open the [private vulnerability report form](https://github.com/yinuobian05-ui/OpenReady/security/advisories/new). Do not open a public issue or publish a proof of concept containing sensitive data.
 
 Include only:
 

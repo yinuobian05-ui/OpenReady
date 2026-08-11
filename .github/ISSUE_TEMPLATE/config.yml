@@ -1,2 +1,5 @@
 blank_issues_enabled: false
-contact_links: []
+contact_links:
+  - name: Report a security vulnerability privately
+    url: https://github.com/yinuobian05-ui/OpenReady/security/advisories/new
+    about: Do not post credentials, private data, or unredacted proof of concept material in a public issue.

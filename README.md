@@ -12,9 +12,11 @@ This quick start has a design target of under five minutes. Human testing is int
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-From an OpenReady source checkout, no dependency installation is required:
+Clone the public repository; no dependency installation is required:
 
 ```sh
+git clone https://github.com/yinuobian05-ui/OpenReady.git
+cd OpenReady
 node ./bin/openready.js scan ../your-project
 ```
 
@@ -155,6 +157,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-Version `0.1.0` is a local release candidate maintained by Yinuo Bian (`@yinuobian05-ui`). It has been committed locally, but it has not been pushed, published, or released. Human beta testing is intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. Public usage, users, downloads, stars, issues, and reviews have not occurred and are not claimed.
+Version `0.1.0` is a public GitHub release candidate maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). The `main` branch is public and GitHub Private Vulnerability Reporting is enabled, but no version tag, GitHub Release, or npm publication exists yet. Human beta testing is intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. No usage, adoption, download, review, or impact claims are made.
 
 Licensed under the MIT License.

@@ -29,3 +29,11 @@ The format follows Keep a Changelog principles, and this project intends to use 
 - Ignored, untracked files are not read in Git repositories.
 - Archives, databases, media, binary files, Gitlinks, and large text content are not parsed.
 - Credential patterns are offline heuristics and are not verified.
+
+### Fixed during local pre-release validation
+
+- Redacted credential- and email-shaped substrings embedded in displayed file paths.
+- Rejected backup and temporary variants as substitutes for governance documents.
+- Reduced blockers for ordinary parser variables named `token` while retaining stronger secret assignments.
+- Detected secret assignments whose value starts on the following line.
+- Added a package-to-CLI version synchronization regression check.

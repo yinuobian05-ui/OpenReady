@@ -1,4 +1,16 @@
 import path from 'node:path';
+import { SECRET_MARKER_PATTERN, TOKEN_PATTERN_DEFINITIONS } from './sensitive-patterns.js';
+
+const SENSITIVE_PATH_PATTERNS = Object.freeze([
+  /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}\b/gi,
+  ...TOKEN_PATTERN_DEFINITIONS.map(
+    ({ source, flags }) => new RegExp(source, `${flags}g`),
+  ),
+]);
+const SECRET_ASSIGNMENT_IN_PATH = new RegExp(
+  String.raw`((?:${SECRET_MARKER_PATTERN})\s*[:=]\s*)[^/]+`,
+  'gi',
+);
 
 export function toPortablePath(value) {
   return value.split(path.sep).join('/');
@@ -6,7 +18,12 @@ export function toPortablePath(value) {
 
 export function sanitizeDisplayPath(value) {
   const portable = toPortablePath(value || '.');
-  return portable.replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, '?') || '.';
+  let safe = portable.replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g, '?');
+  for (const pattern of SENSITIVE_PATH_PATTERNS) {
+    safe = safe.replace(pattern, '[REDACTED]');
+  }
+  safe = safe.replace(SECRET_ASSIGNMENT_IN_PATH, '$1[REDACTED]');
+  return safe || '.';
 }
 
 export function isContained(root, candidate) {

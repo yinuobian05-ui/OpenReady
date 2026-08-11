@@ -25,10 +25,21 @@ npm install --global . --ignore-scripts
 openready scan ../your-project
 ```
 
-For machine-readable output:
+From the same source checkout, use:
 
 ```sh
+node ./bin/openready.js scan ../your-project --json
+node ./bin/openready.js --help
+node ./bin/openready.js --version
+```
+
+After the optional global installation, the equivalent commands are:
+
+```sh
+openready scan ../your-project
 openready scan ../your-project --json
+openready --help
+openready --version
 ```
 
 The package has not been published to npm yet. Do not use an npm install command naming `openready` until an official release is confirmed.
@@ -38,6 +49,16 @@ The package has not been published to npm yet. Do not use an npm install command
 - `BLOCKER` — stop and investigate before publication.
 - `WARNING` — manual review is required, but the scan still exits successfully.
 - `INFO` — a boundary, skipped content type, or missing optional file is being disclosed.
+
+Finding counts are not file counts. One file can produce several findings when, for example, its name and multiple content lines trigger different rules. A scan with warnings or informational findings, but no blockers, still exits `0`, so automation that cares about those levels should inspect the JSON findings rather than checking only the process status.
+
+Git author warnings intentionally hide names and email addresses. To review the actual identities locally, without sending them anywhere, run:
+
+```sh
+git log --all --format='%an <%ae>' | sort -u
+```
+
+Missing `README`, license, and security policy checks are warnings because they are important publication decisions. A missing contributing guide is informational in v0.1 because a small project may reasonably add it later. Governance checks verify that a recognized file exists; they do not determine whether a license is legally valid or appropriate.
 
 Exit codes are stable for shell and CI use:
 

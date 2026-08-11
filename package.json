@@ -22,7 +22,8 @@
     "CHANGELOG.md",
     "SECURITY.md",
     "CONTRIBUTING.md",
-    "beta-testing.md"
+    "beta-testing.md",
+    "docs/pre-beta-evaluation.md"
   ],
   "keywords": [
     "git",

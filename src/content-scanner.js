@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createInterface } from 'node:readline';
 import { OpenReadyError } from './errors.js';
 import { isContained } from './path-utils.js';
-import { contentRuleIds } from './rules.js';
+import { contentRuleIds, hasMultilineSecretAssignment } from './rules.js';
 
 function isBinary(buffer) {
   if (buffer.includes(0)) {
@@ -43,13 +43,24 @@ export function scanBufferContent(buffer, findingPath, onFinding) {
   const text = buffer.toString('utf8');
   let lineStart = 0;
   let lineNumber = 1;
+  let previousLine;
+  let previousLineNumber;
   for (let index = 0; index <= text.length; index += 1) {
     const character = text[index];
     if (index !== text.length && character !== '\n' && character !== '\r') continue;
 
-    for (const ruleId of contentRuleIds(text.slice(lineStart, index))) {
+    const line = text.slice(lineStart, index);
+    if (
+      previousLine !== undefined &&
+      hasMultilineSecretAssignment(previousLine, line)
+    ) {
+      onFinding('OR-SEC-005', findingPath, previousLineNumber);
+    }
+    for (const ruleId of contentRuleIds(line)) {
       onFinding(ruleId, findingPath, lineNumber);
     }
+    previousLine = line;
+    previousLineNumber = lineNumber;
     if (character === '\r' && text[index + 1] === '\n') index += 1;
     lineStart = index + 1;
     lineNumber += 1;
@@ -104,12 +115,22 @@ export async function scanFileContent(entry, root, limits, onFinding) {
     reader = createInterface({ input, crlfDelay: Infinity });
 
     let lineNumber = 0;
+    let previousLine;
+    let previousLineNumber;
     try {
       for await (const line of reader) {
         lineNumber += 1;
+        if (
+          previousLine !== undefined &&
+          hasMultilineSecretAssignment(previousLine, line)
+        ) {
+          onFinding('OR-SEC-005', entry.path, previousLineNumber);
+        }
         for (const ruleId of contentRuleIds(line)) {
           onFinding(ruleId, entry.path, lineNumber);
         }
+        previousLine = line;
+        previousLineNumber = lineNumber;
       }
       if (inputError) {
         throw inputError;

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatError } from '../src/formatters.js';
@@ -11,6 +12,7 @@ import {
 } from './fixtures/synthetic-repository.js';
 
 const BIN = fileURLToPath(new URL('../bin/openready.js', import.meta.url));
+const PACKAGE_JSON = fileURLToPath(new URL('../package.json', import.meta.url));
 
 function runCli(args, cwd) {
   return spawnSync(process.execPath, [BIN, ...args], {
@@ -23,6 +25,30 @@ function runCli(args, cwd) {
 
 test('sanitizes terminal and bidirectional controls in displayed paths', () => {
   assert.equal(sanitizeDisplayPath(`src/unsafe\u001b\u009b\u202efile.js`), 'src/unsafe???file.js');
+});
+
+test('redacts credential and email shapes embedded in finding paths', async () => {
+  const fixture = await createSyntheticRepository();
+  try {
+    const token = ['AKIA', 'FILENAME', '00000000'].join('');
+    const email = ['path.fixture', 'example.invalid'].join('@');
+    const bearer = ['Bearer ', 'SyntheticFilenameCredential987654321'].join('');
+    await writeFile(path.join(fixture.root, `.env.${token}`), 'synthetic content\n');
+    await writeFile(path.join(fixture.root, `${email}.log`), 'synthetic log\n');
+    await writeFile(path.join(fixture.root, `.env.${bearer}`), 'synthetic content\n');
+
+    const run = runCli(['scan', fixture.root, '--json']);
+    assert.equal(run.status, 1, run.stderr);
+    assert.equal(run.stdout.includes(token), false);
+    assert.equal(run.stdout.includes(email), false);
+    assert.equal(run.stdout.includes(bearer), false);
+    assert.equal(run.stderr.includes(token), false);
+    assert.equal(run.stderr.includes(email), false);
+    assert.equal(run.stderr.includes(bearer), false);
+    assert.ok(JSON.parse(run.stdout).findings.some((finding) => finding.path.includes('[REDACTED]')));
+  } finally {
+    await fixture.cleanup();
+  }
 });
 
 test('scan defaults to the current directory', async () => {
@@ -57,6 +83,20 @@ test('JSON output is parseable and warnings alone exit zero', async () => {
       (finding) => ({ BLOCKER: 0, WARNING: 1, INFO: 2 })[finding.severity],
     );
     assert.deepEqual(severityRanks, [...severityRanks].sort((left, right) => left - right));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('JSON output is byte-identical across unchanged scans', async () => {
+  const fixture = await createSyntheticRepository();
+  try {
+    const first = runCli(['scan', fixture.root, '--json']);
+    const second = runCli(['scan', fixture.root, '--json']);
+    assert.equal(first.status, 0, first.stderr);
+    assert.equal(second.status, 0, second.stderr);
+    assert.equal(first.stdout, second.stdout);
+    assert.equal(first.stderr, second.stderr);
   } finally {
     await fixture.cleanup();
   }
@@ -117,6 +157,13 @@ test('help and version exit zero while invalid usage exits two', () => {
   const invalidJson = runCli(['scan', '--unknown', '--json']);
   assert.equal(invalidJson.status, 2);
   assert.doesNotThrow(() => JSON.parse(invalidJson.stderr));
+});
+
+test('CLI version stays synchronized with package metadata', async () => {
+  const packageMetadata = JSON.parse(await readFile(PACKAGE_JSON, 'utf8'));
+  const run = runCli(['--version']);
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(run.stdout.trim(), packageMetadata.version);
 });
 
 test('unknown internal errors never expose their original message', () => {

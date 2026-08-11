@@ -6,6 +6,8 @@ Beta testing has not started. No participants, public users, downloads, stars, r
 
 The target is 3–5 friends who are developers or regularly use Git. Each participant must run the tool on a repository they are permitted to inspect and give feedback based on that real run.
 
+Three independent AI roles have performed a synthetic pre-beta evaluation of the CLI contract and generated fixtures. That work is documented in [docs/pre-beta-evaluation.md](docs/pre-beta-evaluation.md), but it is not human usability evidence and does not count toward the 3–5 real runs.
+
 ## Safety rules
 
 - Do not send a repository, scan output, credential, log, or personal information to the maintainer.
@@ -20,7 +22,7 @@ The target is 3–5 friends who are developers or regularly use Git. Each partic
 1. Confirm Node.js 20 or newer with `node --version`.
 2. From the OpenReady source checkout, run `node ./bin/openready.js scan <repository>`.
 3. Run the same scan with `--json`.
-4. Record whether installation and the first scan took less than five minutes.
+4. Time setup plus the first completed text scan, starting before the first OpenReady command and ending when its result appears. Record whether that took less than five minutes.
 5. Review whether each finding is understandable without exposing its matched value.
 6. Note false positives, suspected false negatives, confusing wording, slow behavior, and any boundary failure.
 7. Share only the completed template below with private details removed.
@@ -36,7 +38,7 @@ Operating system:
 Node.js major version:
 Repository type: Git / non-Git
 Repository size band: small / medium / large
-Installation plus first-scan time:
+Setup plus first-scan time:
 Text-mode exit code:
 JSON-mode exit code:
 Were severity levels understandable?:

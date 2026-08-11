@@ -79,6 +79,48 @@ test('does not treat explicit placeholders as secret assignments', async () => {
   }
 });
 
+test('does not block ordinary parser variables named token', async () => {
+  const fixture = await createSyntheticRepository();
+  try {
+    await writeFile(
+      path.join(fixture.root, 'parser-code.js'),
+      [
+        'let token = "identifier";',
+        'const token = "punctuation";',
+      ].join('\n'),
+    );
+    const result = await scanRepository(fixture.root);
+    assert.equal(ruleIds(result).has('OR-SEC-005'), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('detects secret assignments whose values begin on the next line', async () => {
+  const fixture = await createSyntheticRepository();
+  try {
+    const passwordKey = ['pass', 'word'].join('');
+    const clientSecretKey = ['client', 'secret'].join('_');
+    await writeFile(
+      path.join(fixture.root, 'multiline-credentials.json'),
+      [
+        `"${passwordKey}":`,
+        `  "${fixture.values.assignment}",`,
+        `"${clientSecretKey}":`,
+        `  "${fixture.values.assignment}"`,
+      ].join('\n'),
+    );
+    const result = await scanRepository(fixture.root);
+    assert.deepEqual(
+      findingLines(result, 'multiline-credentials.json', 'OR-SEC-005'),
+      [1, 3],
+    );
+    assert.equal(JSON.stringify(result).includes(fixture.values.assignment), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('skips ignored untracked files but still scans tracked ignored files', async () => {
   const fixture = await createSyntheticRepository();
   try {
@@ -247,7 +289,7 @@ test('detects camel-case keys and literal dollar values but skips dynamic refere
     const result = await scanRepository(fixture.root);
     assert.deepEqual(
       findingLines(result, 'literal-and-reference-values.txt', 'OR-SEC-005'),
-      [1, 2, 3, 4, 5, 6, 7, 8],
+      [1, 2, 3, 5, 6],
     );
   } finally {
     await fixture.cleanup();
@@ -462,6 +504,28 @@ test('reports missing governance files in a non-Git directory', async () => {
     assert.ok(ids.has('OR-GOV-003'));
     assert.ok(ids.has('OR-GOV-004'));
     assert.ok(ids.has('OR-BND-005'));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('does not accept backup files as governance documents', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  try {
+    await mkdir(path.join(fixture.root, 'docs'));
+    await Promise.all([
+      writeFile(path.join(fixture.root, 'README.old'), 'synthetic backup\n'),
+      writeFile(path.join(fixture.root, 'LICENSE.bak'), 'synthetic backup\n'),
+      writeFile(path.join(fixture.root, 'docs', 'SECURITY.tmp'), 'synthetic backup\n'),
+      writeFile(path.join(fixture.root, 'docs', 'CONTRIBUTING.orig'), 'synthetic backup\n'),
+    ]);
+
+    const result = await scanRepository(fixture.root);
+    const ids = ruleIds(result);
+    for (const expected of ['OR-GOV-001', 'OR-GOV-002', 'OR-GOV-003', 'OR-GOV-004']) {
+      assert.ok(ids.has(expected), `expected ${expected}`);
+    }
+    assert.ok(ids.has('OR-HYG-002'));
   } finally {
     await fixture.cleanup();
   }

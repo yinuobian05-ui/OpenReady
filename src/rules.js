@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { SECRET_MARKER_PATTERN, TOKEN_PATTERN_DEFINITIONS } from './sensitive-patterns.js';
 
 export const RULES = Object.freeze({
   'OR-SEC-001': Object.freeze({
@@ -258,23 +259,22 @@ const MAC_HOME_PATH = /\/Users\/[^/\r\n"'`]+(?=\/|["'`]|$)/;
 const LINUX_HOME_PATH = /\/home\/[^/\r\n"'`]+(?=\/|["'`]|$)/;
 const WINDOWS_HOME_PATH = /[A-Z]:\\+Users\\+[^\\\r\n"'`]+(?=\\|["'`]|$)/i;
 const WINDOWS_HOME_FORWARD_PATH = /[A-Z]:\/Users\/[^/\r\n"'`]+(?=\/|["'`]|$)/i;
-const SECRET_MARKER_PATTERN = String.raw`(?:api[_-]?key|access[_-]?token|auth[_-]?token|service[_-]?token|client[_-]?secret|secret[_-]?key|aws_secret_access_key|github_token|npm_token|_auth_token|_authtoken|password|passwd|token|secret)`;
 const SECRET_KEY_PATTERN = String.raw`[A-Za-z0-9_-]*${SECRET_MARKER_PATTERN}`;
 const SECRET_ASSIGNMENT = new RegExp(
-  String.raw`(?<![A-Za-z0-9_-])(?:["'\x60])?` +
+  String.raw`(?<![A-Za-z0-9_-])(?:["'\x60])?(` +
     SECRET_KEY_PATTERN +
-    String.raw`(?![A-Za-z0-9_-])(?:["'\x60])?\s*[:=]\s*(?:"([^"\r\n]{6,})"|'([^'\r\n]{6,})'|\x60([^\x60\r\n]{6,})\x60|([^\s#;,"'\x60]{6,}))`,
+    String.raw`)(?![A-Za-z0-9_-])(?:["'\x60])?\s*[:=]\s*(?:"([^"\r\n]{6,})"|'([^'\r\n]{6,})'|\x60([^\x60\r\n]{6,})\x60|([^\s#;,"'\x60]{6,}))`,
   'gi',
 );
-const TOKEN_PATTERNS = Object.freeze([
-  /\bAKIA[0-9A-Z]{16}\b/,
-  /\bgh[pousr]_[A-Za-z0-9]{30,}\b/,
-  /\bgithub_pat_[A-Za-z0-9_]{40,}\b/,
-  /\bxox[baprs]-[A-Za-z0-9-]{20,}\b/,
-  /\bsk_live_[A-Za-z0-9]{16,}\b/,
-  /\bsk-proj-[A-Za-z0-9_-]{20,}\b/,
-  /\bBearer\s+[A-Za-z0-9._~+/=-]{24,}\b/i,
-]);
+const SECRET_ASSIGNMENT_PREFIX = new RegExp(
+  String.raw`(?<![A-Za-z0-9_-])(?:["'\x60])?(` +
+    SECRET_KEY_PATTERN +
+    String.raw`)(?![A-Za-z0-9_-])(?:["'\x60])?\s*[:=]\s*$`,
+  'i',
+);
+const TOKEN_PATTERNS = Object.freeze(
+  TOKEN_PATTERN_DEFINITIONS.map(({ source, flags }) => new RegExp(source, flags)),
+);
 
 function looksLikePlaceholder(value) {
   const raw = value.trim();
@@ -292,6 +292,39 @@ function looksLikePlaceholder(value) {
   );
 }
 
+function looksLikeGenericSecretValue(value) {
+  const normalized = value.trim();
+  return (
+    normalized.length >= 16 ||
+    (
+      normalized.length >= 10 &&
+      /[A-Za-z]/.test(normalized) &&
+      /[0-9]/.test(normalized) &&
+      /[^A-Za-z0-9]/.test(normalized)
+    )
+  );
+}
+
+function hasSecretAssignment(value) {
+  SECRET_ASSIGNMENT.lastIndex = 0;
+  let assignment;
+  while ((assignment = SECRET_ASSIGNMENT.exec(value)) !== null) {
+    const key = assignment[1];
+    const assignedValue = assignment.slice(2).find((candidate) => candidate !== undefined);
+    if (!assignedValue || looksLikePlaceholder(assignedValue)) continue;
+    if (/^(?:token|secret)$/i.test(key) && !looksLikeGenericSecretValue(assignedValue)) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
+export function hasMultilineSecretAssignment(keyLine, valueLine) {
+  if (!SECRET_ASSIGNMENT_PREFIX.test(keyLine)) return false;
+  return hasSecretAssignment(`${keyLine}\n${valueLine}`);
+}
+
 export function contentRuleIds(line) {
   const ids = [];
 
@@ -299,15 +332,7 @@ export function contentRuleIds(line) {
     ids.push('OR-SEC-004');
   }
 
-  SECRET_ASSIGNMENT.lastIndex = 0;
-  let assignment;
-  while ((assignment = SECRET_ASSIGNMENT.exec(line)) !== null) {
-    const assignedValue = assignment.slice(1).find((value) => value !== undefined);
-    if (assignedValue && !looksLikePlaceholder(assignedValue)) {
-      ids.push('OR-SEC-005');
-      break;
-    }
-  }
+  if (hasSecretAssignment(line)) ids.push('OR-SEC-005');
 
   if (TOKEN_PATTERNS.some((pattern) => pattern.test(line))) {
     ids.push('OR-SEC-006');
@@ -338,16 +363,16 @@ export function governanceFindings(entries) {
   );
   const findings = [];
 
-  if (![...rootFiles].some((file) => /^readme(?:\.|$)/i.test(file))) {
+  if (![...rootFiles].some((file) => /^readme(?:\.(?:md|markdown|mdown|mkd|txt|rst|adoc|asciidoc))?$/i.test(file))) {
     findings.push({ ruleId: 'OR-GOV-001', path: 'README.md' });
   }
-  if (![...rootFiles].some((file) => /^(?:license|licence|copying)(?:\.|$)/i.test(file))) {
+  if (![...rootFiles].some((file) => /^(?:license|licence|copying)(?:\.(?:md|markdown|txt|rst))?$/i.test(file))) {
     findings.push({ ruleId: 'OR-GOV-002', path: 'LICENSE' });
   }
-  if (![...available].some((file) => /^(?:\.github\/|docs\/)?security(?:\.|$)/i.test(file))) {
+  if (![...available].some((file) => /^(?:\.github\/|docs\/)?security(?:\.(?:md|markdown|txt|rst|adoc|asciidoc))?$/i.test(file))) {
     findings.push({ ruleId: 'OR-GOV-003', path: 'SECURITY.md' });
   }
-  if (![...available].some((file) => /^(?:\.github\/|docs\/)?contributing(?:\.|$)/i.test(file))) {
+  if (![...available].some((file) => /^(?:\.github\/|docs\/)?contributing(?:\.(?:md|markdown|txt|rst|adoc|asciidoc))?$/i.test(file))) {
     findings.push({ ruleId: 'OR-GOV-004', path: 'CONTRIBUTING.md' });
   }
 

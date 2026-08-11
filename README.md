@@ -4,6 +4,8 @@ OpenReady is a small, offline CLI for the last privacy and repository-hygiene ch
 
 It has zero runtime dependencies, sends no telemetry, and never prints a matched secret value.
 
+About to make a repository public? Run OpenReady once, resolve every blocker, review each warning, and scan again before publishing.
+
 > OpenReady does not guarantee that a repository is safe to publish. It does not replace a history-aware secret scanner, legal review, or copyright review.
 
 ## Quick start: first scan
@@ -12,39 +14,37 @@ This quick start has a design target of under five minutes. Human testing is int
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-Clone the public repository; no dependency installation is required:
+From the repository you want to check, run the pinned GitHub release directly:
 
 ```sh
-git clone https://github.com/yinuobian05-ui/OpenReady.git
+npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.0.tar.gz scan .
+```
+
+This downloads the public v0.1.0 source tarball for the first run. The scan itself is offline, read-only, and has no telemetry. OpenReady is not yet published to the npm registry.
+
+For JSON output:
+
+```sh
+npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.0.tar.gz scan . --json
+```
+
+If you prefer to inspect and run the source checkout instead:
+
+```sh
+git clone --branch v0.1.0 https://github.com/yinuobian05-ui/OpenReady.git
 cd OpenReady
-node ./bin/openready.js scan ../your-project
+node ./bin/openready.js scan /path/to/your-project
 ```
 
-To make the command available locally:
+Optional commands from that checkout:
 
 ```sh
-npm install --global . --ignore-scripts
-openready scan ../your-project
-```
-
-From the same source checkout, use:
-
-```sh
-node ./bin/openready.js scan ../your-project --json
+node ./bin/openready.js scan /path/to/your-project --json
 node ./bin/openready.js --help
 node ./bin/openready.js --version
 ```
 
-After the optional global installation, the equivalent commands are:
-
-```sh
-openready scan ../your-project
-openready scan ../your-project --json
-openready --help
-openready --version
-```
-
-The package has not been published to npm yet. Do not use an npm install command naming `openready` until an official release is confirmed.
+Do not use an npm install command naming `openready` until an npm release is confirmed.
 
 ## What the result means
 
@@ -70,12 +70,38 @@ Exit codes are stable for shell and CI use:
 | `1` | Scan completed and found at least one blocker. |
 | `2` | Usage error or the scan could not complete reliably. |
 
-Example output contains locations and fixed descriptions, never matched values:
+This exact shape comes from a clearly fictional synthetic repository. It demonstrates several rule categories while keeping every matched value hidden:
 
 ```text
 [BLOCKER] OR-SEC-001 .env
   Environment file may contain credentials and should not be published.
+[BLOCKER] OR-SEC-005 .env:1
+  Secret-like assignment detected; the assigned value is intentionally hidden.
+[BLOCKER] OR-SEC-006 .env:2
+  Credential token pattern detected; the matched value is intentionally hidden.
+[BLOCKER] OR-SEC-004 src/privacy.txt:1
+  Private-key header detected; the matched content is intentionally hidden.
+[WARNING] OR-META-001 .git
+  Reachable commits contain author names; confirm those identities may be public.
+[WARNING] OR-META-002 .git
+  Reachable commits contain author emails; confirm those identities may be public.
+[WARNING] OR-META-003 .git
+  Historical Git file contents were not scanned; use a history-aware secret scanner too.
+[WARNING] OR-PRIV-001 src/privacy.txt:2
+  User-home absolute path detected; local identity or machine layout may be exposed.
+[WARNING] OR-PRIV-001 src/privacy.txt:3
+  User-home absolute path detected; local identity or machine layout may be exposed.
+[WARNING] OR-PRIV-001 src/privacy.txt:4
+  User-home absolute path detected; local identity or machine layout may be exposed.
+[WARNING] OR-PRIV-002 src/privacy.txt:5
+  Email address detected; confirm that publishing it is intentional.
+[INFO] OR-BND-011 .git
+  Current Git index blobs were scanned separately from the working tree.
+
+Summary: 4 blocker(s), 7 warning(s), 1 info
 ```
+
+See the [synthetic pre-release evaluation](docs/pre-beta-evaluation.md) for the evidence boundary, defects found, and checks performed. It is not presented as human beta testing or real-world adoption.
 
 ## Checks in v0.1
 

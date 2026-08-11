@@ -157,6 +157,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-Version `0.1.0` is a public GitHub release candidate maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). The `main` branch is public and GitHub Private Vulnerability Reporting is enabled, but no version tag, GitHub Release, or npm publication exists yet. Human beta testing is intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. No usage, adoption, download, review, or impact claims are made.
+Version `0.1.0` is the current public GitHub release, maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. The package has not been published to npm. Human beta testing was intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. No usage, adoption, download, review, or impact claims are made.
 
 Licensed under the MIT License.

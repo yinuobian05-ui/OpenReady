@@ -4,7 +4,7 @@ OpenReady processes repositories that may contain sensitive material. Its output
 
 ## Supported versions
 
-`0.1.x` is the current development line. The repository is public, but no tagged release or npm publication has occurred yet. Security fixes will be documented in the changelog and release notes.
+`0.1.x` is the current supported line, beginning with the public GitHub release `v0.1.0`. The package has not been published to npm. Security fixes will be documented in the changelog and release notes.
 
 ## Reporting a vulnerability
 

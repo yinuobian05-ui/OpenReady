@@ -2,7 +2,7 @@
 
 ## Current status
 
-Human beta testing is intentionally skipped for the v0.1.0 release candidate and is not a release prerequisite. No human beta runs, participants, or usage evidence are claimed. This file is retained only as an optional future evidence template.
+Human beta testing was intentionally skipped for the v0.1.0 release and was not a release prerequisite. No human beta runs, participants, or usage evidence are claimed. This file is retained only as an optional future evidence template.
 
 If genuine volunteers become available later, a useful optional target is 3–5 people who are developers or regularly use Git. Each participant must run the tool on a repository they are permitted to inspect and give feedback based on that real run. Do not recruit or invent participants merely to fill this template.
 
@@ -83,6 +83,6 @@ For each actionable result:
 | Downloads | No npm release; no claim |
 | Stars | No claim; use live GitHub state if needed |
 | Public issues | No claim; use live GitHub state if needed |
-| Published releases | Not yet occurred |
+| Published releases | GitHub v0.1.0; no npm publication |
 
 These fields must remain explicit rather than being estimated or backfilled.

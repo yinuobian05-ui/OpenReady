@@ -80,9 +80,9 @@ For each actionable result:
 | --- | --- |
 | Real beta runs | Intentionally skipped for v0.1.0; 0 runs |
 | Public users | No evidence recorded |
-| Downloads | No npm release; no claim |
+| Downloads | npm v0.1.1 published; no download count claimed |
 | Stars | No claim; use live GitHub state if needed |
 | Public issues | No claim; use live GitHub state if needed |
-| Published releases | GitHub v0.1.0; no npm publication |
+| Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
 
 These fields must remain explicit rather than being estimated or backfilled.

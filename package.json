@@ -1,6 +1,6 @@
 {
-  "name": "openready",
-  "version": "0.1.0",
+  "name": "@yb5/openready",
+  "version": "0.1.1",
   "description": "Offline pre-publication hygiene checks for Git repositories.",
   "author": "Yinuo Bian",
   "repository": {
@@ -13,7 +13,11 @@
   },
   "type": "module",
   "bin": {
-    "openready": "./bin/openready.js"
+    "openready": "bin/openready.js"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "engines": {
     "node": ">=20"

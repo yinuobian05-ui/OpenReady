@@ -10,28 +10,34 @@ About to make a repository public? Run OpenReady once, resolve every blocker, re
 
 ## Quick start: first scan
 
-This quick start has a design target of under five minutes. Human testing is intentionally skipped for v0.1.0, so no timing result is claimed.
+This quick start has a design target of under five minutes. Human testing was intentionally skipped for v0.1.0, so no measured timing result is claimed.
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-From the repository you want to check, run the pinned GitHub release directly:
+Run the current npm release from the repository you want to check:
 
 ```sh
-npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.0.tar.gz scan .
+npx --yes @yb5/openready@0.1.1 scan .
 ```
 
-This downloads the public v0.1.0 source tarball for the first run. The scan itself is offline, read-only, and has no telemetry. OpenReady is not yet published to the npm registry.
+This downloads the public package for the first run. The scan itself is offline, read-only, and has no telemetry.
 
 For JSON output:
 
 ```sh
-npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.0.tar.gz scan . --json
+npx --yes @yb5/openready@0.1.1 scan . --json
+```
+
+To pin the source archive instead of using the npm registry:
+
+```sh
+npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.1.tar.gz scan .
 ```
 
 If you prefer to inspect and run the source checkout instead:
 
 ```sh
-git clone --branch v0.1.0 https://github.com/yinuobian05-ui/OpenReady.git
+git clone --branch v0.1.1 https://github.com/yinuobian05-ui/OpenReady.git
 cd OpenReady
 node ./bin/openready.js scan /path/to/your-project
 ```
@@ -43,8 +49,6 @@ node ./bin/openready.js scan /path/to/your-project --json
 node ./bin/openready.js --help
 node ./bin/openready.js --version
 ```
-
-Do not use an npm install command naming `openready` until an npm release is confirmed.
 
 ## What the result means
 
@@ -183,6 +187,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-Version `0.1.0` is the current public GitHub release, maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. The package has not been published to npm. Human beta testing was intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. No usage, adoption, download, review, or impact claims are made.
+Version `0.1.1` is the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.1), maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. Human beta testing was intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. No usage, adoption, download, review, or impact claims are made.
 
 Licensed under the MIT License.

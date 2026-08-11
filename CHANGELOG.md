@@ -2,11 +2,22 @@
 
 All notable changes to OpenReady will be documented in this file.
 
-The format follows Keep a Changelog principles, and this project intends to use semantic versioning after its first public release.
+The format follows Keep a Changelog principles, and this project uses Semantic Versioning.
 
 ## [Unreleased]
 
 - No public changes yet.
+
+## [0.1.1] - 2026-08-11
+
+### Changed
+
+- Published the first npm package so a pinned scan can run as `npx --yes @yb5/openready@0.1.1 scan .`.
+- Normalized the npm executable path and declared public publication through the official npm registry.
+- Simplified the README first-run path and added a complete synthetic, redacted result example.
+- Added a repository social preview asset; it is not included in the npm package.
+
+Scanner rules, output fields, exit codes, and safety boundaries are unchanged from v0.1.0.
 
 ## [0.1.0] - 2026-08-11
 

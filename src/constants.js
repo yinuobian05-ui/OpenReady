@@ -1,5 +1,5 @@
 export const TOOL_NAME = 'openready';
-export const VERSION = '0.1.0';
+export const VERSION = '0.1.1';
 
 export const EXIT_CODES = Object.freeze({
   READY: 0,

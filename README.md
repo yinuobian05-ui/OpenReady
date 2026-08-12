@@ -2,13 +2,13 @@
 
 **Run one local check before you make a Git repository public.**
 
-OpenReady catches credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
+OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
 ```sh
 npx -y @yb5/openready@0.1.1 scan .
 ```
 
-- The package downloads once; the scan itself runs offline.
+- `npx` may download the package before the scan; the scan itself makes no network requests.
 - It changes no files, follows no symlinks, and sends no telemetry.
 - Matched secret values and Git identities are never printed.
 - It has zero runtime dependencies and requires Node.js 20 or newer.

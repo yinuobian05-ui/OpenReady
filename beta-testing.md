@@ -91,10 +91,11 @@ For each actionable result:
 | Date | Channel | Action | Evidence | Outcome at record time |
 | --- | --- | --- | --- | --- |
 | 2026-08-12 | GitHub Discussions | Published a v0.1.1 trial request with the exact install command, privacy guidance, and a structured request for real feedback. | [Launch discussion #1](https://github.com/yinuobian05-ui/OpenReady/discussions/1) | Posted successfully; no response, run, issue, or star is claimed yet. |
+| 2026-08-12 | GitHub | Improved first-run conversion with a real synthetic CLI demo, a shorter pinned install command, clearer safety boundaries, and a one-line feedback format. | [Merged pull request #2](https://github.com/yinuobian05-ui/OpenReady/pull/2) | Merged after the Node.js 20, 22, and 24 CI jobs passed; no resulting adoption is claimed yet. |
 
 ## Metrics state
 
-Snapshot time: 2026-08-12 12:42 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
+Snapshot time: 2026-08-12 14:17 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
@@ -102,9 +103,9 @@ Snapshot time: 2026-08-12 12:42 UTC+8. Metrics can lag; later values must be rea
 | Public users | 0 verified users |
 | Downloads | npm v0.1.1 is published; the npm download-count endpoint did not return an available count, so no download number is claimed |
 | Stars / forks / watchers | 0 / 0 / 0 from GitHub |
-| Public issues / pull requests | 0 / 0 open or closed |
+| Public issues / pull requests | 0 issues; 1 merged maintainer pull request |
 | GitHub traffic | 0 views and 0 clones in the owner traffic endpoint; this source may lag |
-| GitHub Discussions | 1 launch announcement; 0 responses claimed at snapshot time |
+| GitHub Discussions | 1 launch announcement; 0 comments at snapshot time |
 | Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
 
 These fields must remain explicit rather than being estimated or backfilled.

@@ -92,20 +92,23 @@ For each actionable result:
 | --- | --- | --- | --- | --- |
 | 2026-08-12 | GitHub Discussions | Published a v0.1.1 trial request with the exact install command, privacy guidance, and a structured request for real feedback. | [Launch discussion #1](https://github.com/yinuobian05-ui/OpenReady/discussions/1) | Posted successfully; no response, run, issue, or star is claimed yet. |
 | 2026-08-12 | GitHub | Improved first-run conversion with a real synthetic CLI demo, a shorter pinned install command, clearer safety boundaries, and a one-line feedback format. | [Merged pull request #2](https://github.com/yinuobian05-ui/OpenReady/pull/2) | Merged after the Node.js 20, 22, and 24 CI jobs passed; no resulting adoption is claimed yet. |
+| 2026-08-12 | Terminal Trove | Submitted OpenReady through the official tool-submission form for curator review. | [Submission page](https://terminaltrove.com/post/) | The site displayed a submission acknowledgement. Acceptance, a public listing URL, and the final submitted field values are not yet independently verifiable. |
+| 2026-08-12 | awesome-cli-apps-in-a-csv | Opened a project-inclusion request using the directory's documented self-nomination route. | [Inclusion request #360](https://github.com/toolleeo/awesome-cli-apps-in-a-csv/issues/360) | Open and awaiting review; 0 comments at snapshot time. This is not counted as an accepted listing or a user. |
 
 ## Metrics state
 
-Snapshot time: 2026-08-12 14:17 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
+Snapshot time: 2026-08-12 18:19 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
 | Real beta runs | Intentionally skipped for v0.1.0; 0 verified runs |
 | Public users | 0 verified users |
-| Downloads | npm v0.1.1 is published; the npm download-count endpoint did not return an available count, so no download number is claimed |
+| Downloads | npm v0.1.1 is published; the npm download-count endpoint returned `package not found`, so no download number is claimed |
 | Stars / forks / watchers | 0 / 0 / 0 from GitHub |
 | Public issues / pull requests | 0 issues; 1 merged maintainer pull request |
 | GitHub traffic | 0 views and 0 clones in the owner traffic endpoint; this source may lag |
 | GitHub Discussions | 1 launch announcement; 0 comments at snapshot time |
+| Open-source directory requests | 1 Terminal Trove submission acknowledgement; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
 | Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
 
 These fields must remain explicit rather than being estimated or backfilled.

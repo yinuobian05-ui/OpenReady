@@ -92,12 +92,13 @@ For each actionable result:
 | --- | --- | --- | --- | --- |
 | 2026-08-12 | GitHub Discussions | Published a v0.1.1 trial request with the exact install command, privacy guidance, and a structured request for real feedback. | [Launch discussion #1](https://github.com/yinuobian05-ui/OpenReady/discussions/1) | Posted successfully; no response, run, issue, or star is claimed yet. |
 | 2026-08-12 | GitHub | Improved first-run conversion with a real synthetic CLI demo, a shorter pinned install command, clearer safety boundaries, and a one-line feedback format. | [Merged pull request #2](https://github.com/yinuobian05-ui/OpenReady/pull/2) | Merged after the Node.js 20, 22, and 24 CI jobs passed; no resulting adoption is claimed yet. |
-| 2026-08-12 | Terminal Trove | Submitted OpenReady through the official tool-submission form for curator review. | [Submission page](https://terminaltrove.com/post/) | The site displayed a submission acknowledgement. Acceptance, a public listing URL, and the final submitted field values are not yet independently verifiable. |
+| 2026-08-12 | Terminal Trove | Submitted OpenReady through the official tool-submission form for curator review, then sent a field-verification request because browser autofill may have changed the tool name and install command. | [Submission page](https://terminaltrove.com/post/) | The site displayed a submission acknowledgement and the correction email was verified in Sent. Acceptance, a public listing URL, and the curator's final field values are not yet independently verifiable. |
 | 2026-08-12 | awesome-cli-apps-in-a-csv | Opened a project-inclusion request using the directory's documented self-nomination route. | [Inclusion request #360](https://github.com/toolleeo/awesome-cli-apps-in-a-csv/issues/360) | Open and awaiting review; 0 comments at snapshot time. This is not counted as an accepted listing or a user. |
+| 2026-08-12 | DevTool Center | Submitted OpenReady as a free Security tool with the GitHub repository URL and seven relevant tags. | [Submission page](https://www.devtool.center/submit) | The site displayed `Submission Received!` and placed it in the review queue. Acceptance and a public listing URL are not yet verified. |
 
 ## Metrics state
 
-Snapshot time: 2026-08-12 18:19 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
+Snapshot time: 2026-08-12 18:55 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
@@ -108,7 +109,7 @@ Snapshot time: 2026-08-12 18:19 UTC+8. Metrics can lag; later values must be rea
 | Public issues / pull requests | 0 issues; 1 merged maintainer pull request |
 | GitHub traffic | 0 views and 0 clones in the owner traffic endpoint; this source may lag |
 | GitHub Discussions | 1 launch announcement; 0 comments at snapshot time |
-| Open-source directory requests | 1 Terminal Trove submission acknowledgement; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
+| Open-source directory requests | 2 form submission acknowledgements; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
 | Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
 
 These fields must remain explicit rather than being estimated or backfilled.

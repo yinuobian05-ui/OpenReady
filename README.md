@@ -1,16 +1,37 @@
 # OpenReady
 
-OpenReady is a small, offline CLI for the last privacy and repository-hygiene check before a Git repository becomes public. It looks for exposed credentials, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
+**Run one local check before you make a Git repository public.**
 
-It has zero runtime dependencies, sends no telemetry, and never prints a matched secret value.
+OpenReady catches credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
-About to make a repository public? Run OpenReady once, resolve every blocker, review each warning, and scan again before publishing.
+```sh
+npx -y @yb5/openready@0.1.1 scan .
+```
+
+- The package downloads once; the scan itself runs offline.
+- It changes no files, follows no symlinks, and sends no telemetry.
+- Matched secret values and Git identities are never printed.
+- It has zero runtime dependencies and requires Node.js 20 or newer.
+
+![OpenReady v0.1.1 contrasting BLOCKED and READY results from fully synthetic repositories](assets/openready-terminal-demo.gif)
+
+The demo uses two fully synthetic Git repositories and excerpted actual v0.1.1 CLI output. A result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review.
+
+If you try it, share one privacy-safe line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
+
+```text
+OS / Node major / scan completed? / most confusing part / would use again?
+```
+
+For example: `macOS / Node 24 / yes / none / yes — useful before first public push`.
+
+Do not paste scan output, repository contents, credentials, logs, or personal information.
 
 > OpenReady does not guarantee that a repository is safe to publish. It does not replace a history-aware secret scanner, legal review, or copyright review.
 
-## Quick start: first scan
+## First scan details
 
-This quick start has a design target of under five minutes. Human testing was intentionally skipped for v0.1.0, so no measured timing result is claimed.
+This first run has a design target of under five minutes. No measured human timing or adoption result is claimed yet.
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 

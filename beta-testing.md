@@ -8,6 +8,18 @@ If genuine volunteers become available later, a useful optional target is 3–5 
 
 Three independent AI roles performed a synthetic pre-release evaluation of the CLI contract and generated fixtures. That work is documented in [docs/pre-beta-evaluation.md](docs/pre-beta-evaluation.md), but it is not human usability evidence and does not count as a beta run.
 
+## Fastest privacy-safe feedback
+
+After one real run, a participant can post this single line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
+
+```text
+OS / Node major / scan completed? / most confusing part / would use again?
+```
+
+For example: `macOS / Node 24 / yes / none / yes — useful before first public push`.
+
+Do not paste scan output, repository contents, credentials, logs, or personal information. The longer template below is optional when someone wants to report more detail safely.
+
 ## Safety rules
 
 - Do not send a repository, scan output, credential, log, or personal information to the maintainer.

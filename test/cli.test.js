@@ -72,6 +72,7 @@ test('JSON output is parseable and warnings alone exit zero', async () => {
     assert.equal(result.tool, 'openready');
     assert.equal(result.summary.blockers, 0);
     assert.equal(result.root, '.');
+    assert.equal(run.stdout.includes('/discussions/1'), false);
     const counted = { blockers: 0, warnings: 0, info: 0 };
     for (const finding of result.findings) {
       if (finding.severity === 'BLOCKER') counted.blockers += 1;
@@ -125,6 +126,11 @@ test('text output reports rules without exposing matched values', async () => {
     assert.equal(run.status, 1, run.stderr);
     assert.equal(run.stderr, '');
     assert.match(run.stdout, /\[BLOCKER\] OR-SEC-/);
+    assert.match(
+      run.stdout,
+      /https:\/\/github\.com\/yinuobian05-ui\/OpenReady\/discussions\/1/,
+    );
+    assert.match(run.stdout, /never paste scan output or repository data/i);
     for (const hidden of Object.values(fixture.values)) {
       assert.equal(run.stdout.includes(hidden), false);
       assert.equal(run.stderr.includes(hidden), false);

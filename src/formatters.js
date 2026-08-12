@@ -1,5 +1,7 @@
 import { TOOL_NAME, VERSION } from './constants.js';
 
+const FEEDBACK_URL = 'https://github.com/yinuobian05-ui/OpenReady/discussions/1';
+
 export function formatText(result) {
   const lines = [
     `OpenReady v${result.version}`,
@@ -22,6 +24,10 @@ export function formatText(result) {
     `Summary: ${result.summary.blockers} blocker(s), ` +
     `${result.summary.warnings} warning(s), ${result.summary.info} info`,
   );
+  lines.push('');
+  lines.push('Privacy-safe feedback (never paste scan output or repository data):');
+  lines.push(FEEDBACK_URL);
+  lines.push('OS / Node major / completed? / confusing part / would use again?');
   return `${lines.join('\n')}\n`;
 }
 

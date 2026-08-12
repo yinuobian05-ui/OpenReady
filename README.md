@@ -124,6 +124,10 @@ This exact shape comes from a clearly fictional synthetic repository. It demonst
   Current Git index blobs were scanned separately from the working tree.
 
 Summary: 4 blocker(s), 7 warning(s), 1 info
+
+Privacy-safe feedback (never paste scan output or repository data):
+https://github.com/yinuobian05-ui/OpenReady/discussions/1
+OS / Node major / completed? / confusing part / would use again?
 ```
 
 See the [synthetic pre-release evaluation](docs/pre-beta-evaluation.md) for the evidence boundary, defects found, and checks performed. It is not presented as human beta testing or real-world adoption.

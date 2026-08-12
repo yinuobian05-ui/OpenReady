@@ -74,15 +74,25 @@ For each actionable result:
 6. Link the actual issue, change, and release after they exist.
 7. Update aggregate claims only from recorded evidence.
 
+## Public launch log
+
+| Date | Channel | Action | Evidence | Outcome at record time |
+| --- | --- | --- | --- | --- |
+| 2026-08-12 | GitHub Discussions | Published a v0.1.1 trial request with the exact install command, privacy guidance, and a structured request for real feedback. | [Launch discussion #1](https://github.com/yinuobian05-ui/OpenReady/discussions/1) | Posted successfully; no response, run, issue, or star is claimed yet. |
+
 ## Metrics state
+
+Snapshot time: 2026-08-12 12:42 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
-| Real beta runs | Intentionally skipped for v0.1.0; 0 runs |
-| Public users | No evidence recorded |
-| Downloads | npm v0.1.1 published; no download count claimed |
-| Stars | No claim; use live GitHub state if needed |
-| Public issues | No claim; use live GitHub state if needed |
+| Real beta runs | Intentionally skipped for v0.1.0; 0 verified runs |
+| Public users | 0 verified users |
+| Downloads | npm v0.1.1 is published; the npm download-count endpoint did not return an available count, so no download number is claimed |
+| Stars / forks / watchers | 0 / 0 / 0 from GitHub |
+| Public issues / pull requests | 0 / 0 open or closed |
+| GitHub traffic | 0 views and 0 clones in the owner traffic endpoint; this source may lag |
+| GitHub Discussions | 1 launch announcement; 0 responses claimed at snapshot time |
 | Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
 
 These fields must remain explicit rather than being estimated or backfilled.

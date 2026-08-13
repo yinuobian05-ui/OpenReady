@@ -98,18 +98,19 @@ For each actionable result:
 
 ## Metrics state
 
-Snapshot time: 2026-08-12 18:55 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
+Snapshot time: 2026-08-12 20:31 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
 | Real beta runs | Intentionally skipped for v0.1.0; 0 verified runs |
 | Public users | 0 verified users |
-| Downloads | npm v0.1.1 is published; the npm download-count endpoint returned `package not found`, so no download number is claimed |
+| Downloads | npm's explicit-date API reports 75 downloads on 2026-08-11 and 0 on 2026-08-12 at snapshot time. All 75 occurred within the package's first 24 hours, but download events do not prove 75 users and may include maintainer or automated registry activity. |
 | Stars / forks / watchers | 0 / 0 / 0 from GitHub |
-| Public issues / pull requests | 0 issues; 1 merged maintainer pull request |
-| GitHub traffic | 0 views and 0 clones in the owner traffic endpoint; this source may lag |
+| Public issues / pull requests | 0 user issues; 1 merged maintainer pull request |
+| GitHub traffic | 2 views / 1 unique visitor and 49 clones / 18 unique cloners in the owner traffic endpoint. This traffic is unattributed; 15 successful CI runs and maintainer activity are plausible contributors, so it is not counted as verified user adoption. |
 | GitHub Discussions | 1 launch announcement; 0 comments at snapshot time |
 | Open-source directory requests | 2 form submission acknowledgements; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
 | Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
+| Maintenance checks | Latest CI for `4ac8ce9` passed; local tests passed 48 with 0 failures and 1 platform-limited skip; package dry-run contained 21 files; self-scan returned `READY` |
 
 These fields must remain explicit rather than being estimated or backfilled.

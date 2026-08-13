@@ -1,6 +1,6 @@
 {
   "name": "@yb5/openready",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Offline pre-publication hygiene checks for Git repositories.",
   "author": "Yinuo Bian",
   "repository": {
@@ -35,7 +35,8 @@
     "SECURITY.md",
     "CONTRIBUTING.md",
     "beta-testing.md",
-    "docs/pre-beta-evaluation.md"
+    "docs/pre-beta-evaluation.md",
+    "docs/releases/v0.1.2.md"
   ],
   "keywords": [
     "git",

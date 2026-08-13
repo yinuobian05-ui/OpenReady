@@ -6,6 +6,10 @@ The format follows Keep a Changelog principles, and this project uses Semantic V
 
 ## [Unreleased]
 
+No public changes yet.
+
+## [0.1.2] - 2026-08-13
+
 ### Changed
 
 - Added a privacy-safe feedback link and one-line response format after text scans. JSON output remains unchanged, and the CLI still makes no network requests.

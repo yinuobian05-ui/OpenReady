@@ -5,7 +5,7 @@
 OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
 ```sh
-npx -y @yb5/openready@0.1.1 scan .
+npx -y @yb5/openready@0.1.2 scan .
 ```
 
 - `npx` may download the package before the scan; the scan itself makes no network requests.
@@ -15,7 +15,7 @@ npx -y @yb5/openready@0.1.1 scan .
 
 ![OpenReady v0.1.1 contrasting BLOCKED and READY results from fully synthetic repositories](assets/openready-terminal-demo.gif)
 
-The demo uses two fully synthetic Git repositories and excerpted actual v0.1.1 CLI output. A result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review.
+This v0.1.1 demo remains behaviorally representative for v0.1.2 except that completed text scans now add the privacy-safe feedback prompt shown in the example below. It uses two fully synthetic Git repositories and excerpted actual CLI output. A result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review.
 
 If you try it, share one privacy-safe line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
 
@@ -38,7 +38,7 @@ Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-aut
 Run the current npm release from the repository you want to check:
 
 ```sh
-npx --yes @yb5/openready@0.1.1 scan .
+npx --yes @yb5/openready@0.1.2 scan .
 ```
 
 This downloads the public package for the first run. The scan itself is offline, read-only, and has no telemetry.
@@ -46,19 +46,19 @@ This downloads the public package for the first run. The scan itself is offline,
 For JSON output:
 
 ```sh
-npx --yes @yb5/openready@0.1.1 scan . --json
+npx --yes @yb5/openready@0.1.2 scan . --json
 ```
 
 To pin the source archive instead of using the npm registry:
 
 ```sh
-npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.1.tar.gz scan .
+npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.2.tar.gz scan .
 ```
 
 If you prefer to inspect and run the source checkout instead:
 
 ```sh
-git clone --branch v0.1.1 https://github.com/yinuobian05-ui/OpenReady.git
+git clone --branch v0.1.2 https://github.com/yinuobian05-ui/OpenReady.git
 cd OpenReady
 node ./bin/openready.js scan /path/to/your-project
 ```
@@ -212,6 +212,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-Version `0.1.1` is the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.1), maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. Human beta testing was intentionally skipped for v0.1.0, with 0 human runs; future human evaluation is optional. No usage, adoption, download, review, or impact claims are made.
+Version `0.1.2` is the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.2), maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed as of this release.
 
 Licensed under the MIT License.

@@ -95,22 +95,23 @@ For each actionable result:
 | 2026-08-12 | Terminal Trove | Submitted OpenReady through the official tool-submission form for curator review, then sent a field-verification request because browser autofill may have changed the tool name and install command. | [Submission page](https://terminaltrove.com/post/) | The site displayed a submission acknowledgement and the correction email was verified in Sent. Acceptance, a public listing URL, and the curator's final field values are not yet independently verifiable. |
 | 2026-08-12 | awesome-cli-apps-in-a-csv | Opened a project-inclusion request using the directory's documented self-nomination route. | [Inclusion request #360](https://github.com/toolleeo/awesome-cli-apps-in-a-csv/issues/360) | Open and awaiting review; 0 comments at snapshot time. This is not counted as an accepted listing or a user. |
 | 2026-08-12 | DevTool Center | Submitted OpenReady as a free Security tool with the GitHub repository URL and seven relevant tags. | [Submission page](https://www.devtool.center/submit) | The site displayed `Submission Received!` and placed it in the review queue. Acceptance and a public listing URL are not yet verified. |
+| 2026-08-13 | GitHub and npm | Published v0.1.2 with a privacy-safe feedback footer after public CI passed on Node.js 20, 22, and 24. | [Pull request #3](https://github.com/yinuobian05-ui/OpenReady/pull/3), [CI](https://github.com/yinuobian05-ui/OpenReady/actions/runs/31657006746), [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.2), [npm package](https://www.npmjs.com/package/@yb5/openready/v/0.1.2) | Tag, registry metadata, latest dist-tag, fresh install, CLI version, and an installed-package scan were verified. No independent run, feedback, adoption, review, or impact is claimed. |
 
 ## Metrics state
 
-Snapshot time: 2026-08-12 20:31 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
+Snapshot time: 2026-08-13 09:41 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
 | Real beta runs | Intentionally skipped for v0.1.0; 0 verified runs |
 | Public users | 0 verified users |
-| Downloads | npm's explicit-date API reports 75 downloads on 2026-08-11 and 0 on 2026-08-12 at snapshot time. All 75 occurred within the package's first 24 hours, but download events do not prove 75 users and may include maintainer or automated registry activity. |
+| Downloads | npm's explicit-date API reports 75 downloads on 2026-08-11, 0 on 2026-08-12, and 0 on 2026-08-13 at snapshot time. Download events do not prove users and may include maintainer or automated registry activity. The v0.1.2 publication is too recent for this snapshot to measure. |
 | Stars / forks / watchers | 0 / 0 / 0 from GitHub |
-| Public issues / pull requests | 0 user issues; 1 merged maintainer pull request |
-| GitHub traffic | 2 views / 1 unique visitor and 49 clones / 18 unique cloners in the owner traffic endpoint. This traffic is unattributed; 15 successful CI runs and maintainer activity are plausible contributors, so it is not counted as verified user adoption. |
+| Public issues / pull requests | 0 user issues; 0 external pull requests; 2 merged maintainer pull requests |
+| GitHub traffic | 2 views / 1 unique visitor and 49 clones / 18 unique cloners in the owner traffic endpoint, all reported on 2026-08-11. This traffic is unattributed and is not counted as verified user adoption. |
 | GitHub Discussions | 1 launch announcement; 0 comments at snapshot time |
 | Open-source directory requests | 2 form submission acknowledgements; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
-| Published releases | GitHub v0.1.0 and v0.1.1; npm v0.1.1 |
-| Maintenance checks | Latest CI for `4ac8ce9` passed; local tests passed 48 with 0 failures and 1 platform-limited skip; package dry-run contained 21 files; self-scan returned `READY` |
+| Published releases | GitHub v0.1.0, v0.1.1, and v0.1.2; npm latest is v0.1.2 |
+| Maintenance checks | Main CI for `a8d41f8` passed on Node.js 20, 22, and 24. Local tests passed 48 with 0 failures and 1 platform-limited skip; the v0.1.2 package contained 22 reviewed files; source and fresh installed-package scans returned `READY`. |
 
 These fields must remain explicit rather than being estimated or backfilled.

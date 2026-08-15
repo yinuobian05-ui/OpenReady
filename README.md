@@ -4,7 +4,7 @@
 
 OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
-The v0.2.0 release candidate adds a safe first step. After that version is published, try the output without giving OpenReady access to your repository:
+OpenReady v0.2.0 adds a safe first step. Once the public npm endpoint reports that version, try its output without giving OpenReady access to your repository:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" demo
@@ -16,7 +16,7 @@ npx --yes "@yb5/openready@0.2.0" demo
 - Matched secret values and Git identities are never printed.
 - It has zero runtime dependencies and requires Node.js 20 or newer. Git is required for the synthetic demo and repository metadata checks.
 
-When you are ready, scan only a repository you are authorized to inspect:
+After the package is available, scan only a repository you are authorized to inspect:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" scan .
@@ -44,13 +44,13 @@ This first run has a design target of under five minutes. No measured human timi
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-After v0.2.0 is published, run that pinned npm release from the repository you want to check:
+Once the public npm endpoint reports v0.2.0, run that pinned package from the repository you want to check:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" scan .
 ```
 
-This downloads the public package for the first run. The scan itself is offline, read-only, and has no telemetry.
+This command downloads the pinned package from npm for the first run. The scan itself is offline, read-only, and has no telemetry.
 
 For JSON output:
 
@@ -222,6 +222,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-Version `0.1.2` remains the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.2). This branch prepares v0.2.0 and its synthetic demo; it is not public until the registry package, tag, and release are independently verified. OpenReady is maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed. Synthetic demo runs remain a separate smoke-test signal.
+This source tree and package metadata are version `0.2.0`. Verify the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases) at those endpoints; publication is complete only when the npm package, Git tag, and GitHub release agree. OpenReady is maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed. Synthetic demo runs remain a separate smoke-test signal.
 
 Licensed under the MIT License.

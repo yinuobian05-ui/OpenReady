@@ -35,6 +35,38 @@ export function formatJson(result) {
   return `${JSON.stringify(result, null, 2)}\n`;
 }
 
+export function formatDemoText(result) {
+  const lines = [
+    `OpenReady v${result.version} synthetic demo`,
+    'No personal repository was scanned. Only fixed fictional files were used.',
+    '',
+  ];
+
+  for (const finding of result.findings) {
+    const location = finding.line ? `${finding.path}:${finding.line}` : finding.path;
+    lines.push(`[${finding.severity}] ${finding.ruleId} ${location}`);
+    lines.push(`  ${finding.description}`);
+  }
+
+  lines.push('');
+  lines.push(
+    `Summary: ${result.summary.blockers} blocker(s), ` +
+    `${result.summary.warnings} warning(s), ${result.summary.info} info`,
+  );
+  lines.push('');
+  lines.push('Synthetic demo completed. The BLOCKED result above is expected.');
+  lines.push('The temporary synthetic files were removed.');
+  lines.push('This smoke test is not evidence of real-repository use or adoption.');
+  lines.push('');
+  lines.push('Privacy-safe demo feedback (never paste terminal output or repository data):');
+  lines.push(FEEDBACK_URL);
+  lines.push(
+    'OS / Node major / OpenReady version / demo completed? / one observation / ' +
+    'would try on an authorized repo?',
+  );
+  return `${lines.join('\n')}\n`;
+}
+
 export function formatError(error, json) {
   const exposed = error?.expose === true;
   const code = exposed && typeof error.code === 'string' ? error.code : 'EXECUTION_ERROR';

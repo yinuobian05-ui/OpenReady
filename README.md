@@ -4,26 +4,35 @@
 
 OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
+The v0.2.0 release candidate adds a safe first step. After that version is published, try the output without giving OpenReady access to your repository:
+
 ```sh
-npx -y @yb5/openready@0.1.2 scan .
+npx --yes "@yb5/openready@0.2.0" demo
 ```
 
-- `npx` may download the package before the scan; the scan itself makes no network requests.
-- It changes no files, follows no symlinks, and sends no telemetry.
+- `npx` may download the package before it starts. The demo then runs locally with no telemetry.
+- The demo does not scan the current directory. It creates only fixed fictional files in a unique operating-system temporary directory and removes that exact directory after the run.
+- The `scan` command changes no files, follows no symlinks, and sends no telemetry.
 - Matched secret values and Git identities are never printed.
-- It has zero runtime dependencies and requires Node.js 20 or newer.
+- It has zero runtime dependencies and requires Node.js 20 or newer. Git is required for the synthetic demo and repository metadata checks.
+
+When you are ready, scan only a repository you are authorized to inspect:
+
+```sh
+npx --yes "@yb5/openready@0.2.0" scan .
+```
 
 ![OpenReady v0.1.1 contrasting BLOCKED and READY results from fully synthetic repositories](assets/openready-terminal-demo.gif)
 
-This v0.1.1 demo remains behaviorally representative for v0.1.2 except that completed text scans now add the privacy-safe feedback prompt shown in the example below. It uses two fully synthetic Git repositories and excerpted actual CLI output. A result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review.
+This v0.1.1 recording remains behaviorally representative for the `scan` command in v0.2.0. It uses two fully synthetic Git repositories and excerpted actual CLI output. A scan result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review. The new `demo` command intentionally produces a synthetic `BLOCKED` result but exits `0` when setup, scanning, and cleanup all succeed.
 
-If you try it, share one privacy-safe line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
+After the synthetic demo, you may share this privacy-safe line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
 
 ```text
-OS / Node major / scan completed? / most confusing part / would use again?
+OS / Node major / OpenReady version / demo completed? / one observation / would try on an authorized repo?
 ```
 
-For example: `macOS / Node 24 / yes / none / yes — useful before first public push`.
+That records only an independent synthetic smoke test, not real-repository use or adoption. A verified real-repository test additionally requires the person to scan a repository they are authorized to inspect and give a specific privacy-safe observation.
 
 Do not paste scan output, repository contents, credentials, logs, or personal information.
 
@@ -35,10 +44,10 @@ This first run has a design target of under five minutes. No measured human timi
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-Run the current npm release from the repository you want to check:
+After v0.2.0 is published, run that pinned npm release from the repository you want to check:
 
 ```sh
-npx --yes @yb5/openready@0.1.2 scan .
+npx --yes "@yb5/openready@0.2.0" scan .
 ```
 
 This downloads the public package for the first run. The scan itself is offline, read-only, and has no telemetry.
@@ -46,19 +55,19 @@ This downloads the public package for the first run. The scan itself is offline,
 For JSON output:
 
 ```sh
-npx --yes @yb5/openready@0.1.2 scan . --json
+npx --yes "@yb5/openready@0.2.0" scan . --json
 ```
 
 To pin the source archive instead of using the npm registry:
 
 ```sh
-npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.1.2.tar.gz scan .
+npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.2.0.tar.gz scan .
 ```
 
 If you prefer to inspect and run the source checkout instead:
 
 ```sh
-git clone --branch v0.1.2 https://github.com/yinuobian05-ui/OpenReady.git
+git clone --branch v0.2.0 https://github.com/yinuobian05-ui/OpenReady.git
 cd OpenReady
 node ./bin/openready.js scan /path/to/your-project
 ```
@@ -67,6 +76,7 @@ Optional commands from that checkout:
 
 ```sh
 node ./bin/openready.js scan /path/to/your-project --json
+node ./bin/openready.js demo
 node ./bin/openready.js --help
 node ./bin/openready.js --version
 ```
@@ -85,7 +95,7 @@ Git author warnings intentionally hide names and email addresses. To review the 
 git log --all --format='%an <%ae>' | sort -u
 ```
 
-Missing `README`, license, and security policy checks are warnings because they are important publication decisions. A missing contributing guide is informational in v0.1 because a small project may reasonably add it later. Governance checks verify that a recognized file exists; they do not determine whether a license is legally valid or appropriate.
+Missing `README`, license, and security policy checks are warnings because they are important publication decisions. A missing contributing guide is informational because a small project may reasonably add it later. Governance checks verify that a recognized file exists; they do not determine whether a license is legally valid or appropriate.
 
 Exit codes are stable for shell and CI use:
 
@@ -132,7 +142,7 @@ OS / Node major / completed? / confusing part / would use again?
 
 See the [synthetic pre-release evaluation](docs/pre-beta-evaluation.md) for the evidence boundary, defects found, and checks performed. It is not presented as human beta testing or real-world adoption.
 
-## Checks in v0.1
+## Checks in v0.2
 
 OpenReady checks:
 
@@ -212,6 +222,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-Version `0.1.2` is the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.2), maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed as of this release.
+Version `0.1.2` remains the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.1.2). This branch prepares v0.2.0 and its synthetic demo; it is not public until the registry package, tag, and release are independently verified. OpenReady is maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed. Synthetic demo runs remain a separate smoke-test signal.
 
 Licensed under the MIT License.

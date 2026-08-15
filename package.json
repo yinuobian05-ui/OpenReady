@@ -1,6 +1,6 @@
 {
   "name": "@yb5/openready",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Offline pre-publication hygiene checks for Git repositories.",
   "author": "Yinuo Bian",
   "repository": {
@@ -23,7 +23,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test test/boundaries.test.js test/cli.test.js test/rules.test.js",
+    "test": "node --test test/boundaries.test.js test/cli.test.js test/demo.test.js test/rules.test.js",
     "scan": "node ./bin/openready.js scan ."
   },
   "files": [
@@ -36,7 +36,7 @@
     "CONTRIBUTING.md",
     "beta-testing.md",
     "docs/pre-beta-evaluation.md",
-    "docs/releases/v0.1.2.md"
+    "docs/releases/v0.2.0.md"
   ],
   "keywords": [
     "git",

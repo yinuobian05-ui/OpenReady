@@ -6,7 +6,18 @@ The format follows Keep a Changelog principles, and this project uses Semantic V
 
 ## [Unreleased]
 
-No public changes yet.
+### Added
+
+- Added a one-command `openready demo` that creates a fixed fictional Git repository in an operating-system temporary directory, scans it, and removes that exact directory. The demo never scans the current directory and exits `0` when its expected synthetic `BLOCKED` result and cleanup both succeed.
+- Added explicit evidence boundaries separating synthetic smoke-test runners, verified real-repository beta testers, and adoption.
+
+### Changed
+
+- Expanded CI coverage with macOS and Windows test jobs for the cross-platform demo path.
+
+### Fixed
+
+- Prevented the synthetic demo from selecting a Git executable inside the launch directory or any detected ancestor Git worktree when it is started from a nested directory.
 
 ## [0.1.2] - 2026-08-13
 

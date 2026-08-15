@@ -46,5 +46,5 @@ body:
       options:
         - label: This request does not rely on invented usage data or include real private material.
           required: true
-        - label: I understand that cloud services, telemetry, AI, and plugin systems are outside the v0.1 scope.
+        - label: I understand that cloud services, telemetry, AI, and plugin systems are outside OpenReady's current scope.
           required: true

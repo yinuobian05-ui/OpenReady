@@ -5,13 +5,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Do not paste credentials, private repository content, full logs, personal information, or unredacted paths. Use the smallest synthetic reproduction possible. Security-sensitive reports belong in the private channel described in SECURITY.md once that channel is configured.
+        Do not paste credentials, private repository content, full logs, personal information, or unredacted paths. Use the smallest synthetic reproduction possible. Security-sensitive reports belong in [GitHub Private Vulnerability Reporting](https://github.com/yinuobian05-ui/OpenReady/security/advisories/new).
 
   - type: input
     id: version
     attributes:
       label: OpenReady version
-      placeholder: 0.1.x
+      placeholder: 0.2.0
     validations:
       required: true
 
@@ -20,7 +20,7 @@ body:
     attributes:
       label: Environment
       description: Operating system and Node.js major version only.
-      placeholder: Linux, Node.js 20
+      placeholder: Linux, Node.js 24
     validations:
       required: true
 

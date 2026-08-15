@@ -53,6 +53,6 @@ Use the bug template and provide the smallest synthetic reproduction possible. R
 
 ## Scope guardrails
 
-The v0.1 line does not include accounts, a website, a GUI, cloud storage, remote scanning, credential verification, telemetry, AI, plugins, automatic history rewriting, or automatic publication. Proposals in those areas need a clear privacy and maintenance case before any implementation work begins.
+The current scanner does not include accounts, a website, a GUI, cloud storage, remote scanning, credential verification, telemetry, AI, plugins, automatic history rewriting, or automatic publication. Proposals in those areas need a clear privacy and maintenance case before any implementation work begins.
 
 Run the complete test suite, package dry-run, and self-scan before requesting review. A passing scan is evidence about implemented rules, not proof that publication is safe.

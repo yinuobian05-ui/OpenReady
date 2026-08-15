@@ -6,7 +6,15 @@ The format follows Keep a Changelog principles, and this project uses Semantic V
 
 ## [Unreleased]
 
-No public changes yet.
+### Added
+
+- Added a copy-ready, least-privilege GitHub Actions recipe that pins OpenReady and third-party actions to immutable versions.
+- Added a future-release npm staging workflow that uses GitHub OIDC, runs the complete release checks, and requires a separate npm 2FA approval before publication.
+
+### Changed
+
+- Updated the project's own CI to pin the Node.js 24-based `actions/checkout` v7.0.1 and `actions/setup-node` v7.0.0 releases by full commit SHA.
+- Removed stale pre-publication and v0.1-only wording now that v0.2.0 and private vulnerability reporting are public.
 
 ## [0.2.0] - 2026-08-15
 

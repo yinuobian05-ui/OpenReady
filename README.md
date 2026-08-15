@@ -4,7 +4,7 @@
 
 OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
-OpenReady v0.2.0 adds a safe first step. Once the public npm endpoint reports that version, try its output without giving OpenReady access to your repository:
+OpenReady v0.2.0 adds a safe first step. Try its output without giving OpenReady access to your repository:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" demo
@@ -16,7 +16,7 @@ npx --yes "@yb5/openready@0.2.0" demo
 - Matched secret values and Git identities are never printed.
 - It has zero runtime dependencies and requires Node.js 20 or newer. Git is required for the synthetic demo and repository metadata checks.
 
-After the package is available, scan only a repository you are authorized to inspect:
+After the synthetic demo, scan only a repository you are authorized to inspect:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" scan .
@@ -44,7 +44,7 @@ This first run has a design target of under five minutes. No measured human timi
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-Once the public npm endpoint reports v0.2.0, run that pinned package from the repository you want to check:
+Run the pinned public package from the repository you want to check:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" scan .
@@ -80,6 +80,49 @@ node ./bin/openready.js demo
 node ./bin/openready.js --help
 node ./bin/openready.js --version
 ```
+
+## Optional GitHub Actions check
+
+For a repository that is already hosted on GitHub, this minimal workflow runs the same pinned scan on pull requests and by manual dispatch. It grants only read access to repository contents, does not persist checkout credentials, and pins third-party actions to complete commit SHAs.
+
+```yaml
+name: OpenReady
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.x
+          package-manager-cache: false
+
+      - name: Run OpenReady
+        shell: bash
+        env:
+          npm_config_ignore_scripts: "true"
+          npm_config_registry: https://registry.npmjs.org/
+        run: |
+          cd "$RUNNER_TEMP"
+          npx --yes "@yb5/openready@0.2.0" scan "$GITHUB_WORKSPACE"
+```
+
+The workflow starts npm outside the checked-out repository, fixes the public registry, and disables package lifecycle scripts before downloading the pinned package. It fails when OpenReady finds a blocker or cannot complete reliably; warnings alone do not fail it. The scan itself remains read-only and sends no telemetry. GitHub Actions logs may reveal relative file paths and rule categories, so keep the local command as the default for material that should not appear in hosted CI logs.
 
 ## What the result means
 

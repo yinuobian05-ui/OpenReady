@@ -6,6 +6,10 @@ The format follows Keep a Changelog principles, and this project uses Semantic V
 
 ## [Unreleased]
 
+No public changes yet.
+
+## [0.2.0] - 2026-08-15
+
 ### Added
 
 - Added a one-command `openready demo` that creates a fixed fictional Git repository in an operating-system temporary directory, scans it, and removes that exact directory. The demo never scans the current directory and exits `0` when its expected synthetic `BLOCKED` result and cleanup both succeed.

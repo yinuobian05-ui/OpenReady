@@ -19,12 +19,58 @@ function unsafeGitMetadata() {
   );
 }
 
-function safeExecutableDirectories(root) {
-  const currentDirectory = path.resolve(process.cwd());
-  const currentIsFilesystemRoot = path.dirname(currentDirectory) === currentDirectory;
-  const currentDirectoryIsRelated = (
-    isContained(currentDirectory, root) || isContained(root, currentDirectory)
+function gitExecutableUnavailable() {
+  return new OpenReadyError(
+    'GIT_EXECUTABLE_UNAVAILABLE',
+    'A trusted Git executable could not be located outside the scan or launch-project boundaries.',
   );
+}
+
+function ancestorRepositoryRoots(currentDirectory) {
+  const roots = [];
+  let candidate = currentDirectory;
+
+  while (true) {
+    try {
+      lstatSync(path.join(candidate, '.git'));
+      roots.push(candidate);
+    } catch (error) {
+      if (error.code !== 'ENOENT' && error.code !== 'ENOTDIR') {
+        throw gitExecutableUnavailable();
+      }
+    }
+
+    const parent = path.dirname(candidate);
+    if (parent === candidate) break;
+    candidate = parent;
+  }
+
+  return roots;
+}
+
+function executableExclusionRoots(root) {
+  let resolvedRoot;
+  let currentDirectory;
+  try {
+    resolvedRoot = realpathSync(root);
+    currentDirectory = realpathSync(process.cwd());
+  } catch {
+    throw gitExecutableUnavailable();
+  }
+
+  const roots = [resolvedRoot];
+  if (path.dirname(currentDirectory) !== currentDirectory) {
+    roots.push(currentDirectory);
+  }
+  roots.push(...ancestorRepositoryRoots(currentDirectory));
+  return [...new Set(roots)];
+}
+
+function isExcludedExecutablePath(candidate, exclusionRoots) {
+  return exclusionRoots.some((root) => isContained(root, candidate));
+}
+
+function safeExecutableDirectories(root, exclusionRoots = executableExclusionRoots(root)) {
   const directories = [];
   const seen = new Set();
 
@@ -34,12 +80,7 @@ function safeExecutableDirectories(root) {
     try {
       const resolved = realpathSync(entry);
       if (!lstatSync(resolved).isDirectory()) continue;
-      if (isContained(root, resolved)) continue;
-      if (
-        !currentIsFilesystemRoot &&
-        !currentDirectoryIsRelated &&
-        isContained(currentDirectory, resolved)
-      ) continue;
+      if (isExcludedExecutablePath(resolved, exclusionRoots)) continue;
       const portable = resolved.split(path.sep).join('/').toLowerCase();
       if (portable.endsWith('/node_modules/.bin')) continue;
       if (!seen.has(resolved)) {
@@ -53,19 +94,15 @@ function safeExecutableDirectories(root) {
   return directories;
 }
 
-function resolveGitExecutable(root) {
+export function resolveGitExecutable(root) {
   const executableNames = process.platform === 'win32' ? ['git.exe', 'git'] : ['git'];
-  const currentDirectory = path.resolve(process.cwd());
-  const currentDirectoryIsRelated = (
-    isContained(currentDirectory, root) || isContained(root, currentDirectory)
-  );
+  const exclusionRoots = executableExclusionRoots(root);
 
-  for (const directory of safeExecutableDirectories(root)) {
+  for (const directory of safeExecutableDirectories(root, exclusionRoots)) {
     for (const executableName of executableNames) {
       try {
         const resolved = realpathSync(path.join(directory, executableName));
-        if (isContained(root, resolved)) continue;
-        if (!currentDirectoryIsRelated && isContained(currentDirectory, resolved)) continue;
+        if (isExcludedExecutablePath(resolved, exclusionRoots)) continue;
         const portable = resolved.split(path.sep).join('/').toLowerCase();
         if (portable.includes('/node_modules/.bin/')) continue;
         const stats = lstatSync(resolved);
@@ -78,13 +115,10 @@ function resolveGitExecutable(root) {
     }
   }
 
-  throw new OpenReadyError(
-    'GIT_EXECUTABLE_UNAVAILABLE',
-    'A trusted Git executable could not be located outside the scan root.',
-  );
+  throw gitExecutableUnavailable();
 }
 
-function isolatedGitEnvironment(root) {
+export function isolatedGitEnvironment(root) {
   const environment = {};
   for (const [key, value] of Object.entries(process.env)) {
     if (!key.toUpperCase().startsWith('GIT_') && key.toUpperCase() !== 'PATH') {

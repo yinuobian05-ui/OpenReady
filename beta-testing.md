@@ -8,6 +8,22 @@ If genuine volunteers become available later, a useful optional target is 3–5 
 
 Three independent AI roles performed a synthetic pre-release evaluation of the CLI contract and generated fixtures. That work is documented in [docs/pre-beta-evaluation.md](docs/pre-beta-evaluation.md), but it is not human usability evidence and does not count as a beta run.
 
+## One-command synthetic smoke test
+
+Someone can first confirm that the package runs and that the redacted output is understandable without scanning personal files:
+
+```sh
+npx --yes "@yb5/openready@0.2.0" demo
+```
+
+The command creates only fixed fictional files in a unique operating-system temporary directory, scans them locally, and removes that exact directory. Its expected synthetic `BLOCKED` result demonstrates rule categories; successful demo completion exits `0`.
+
+A distinct non-maintainer may count as one **independent synthetic smoke-test runner** only when they report the OpenReady version, operating system, Node.js major version, successful completion, and one specific observation. This is not a real beta run, user adoption, a testimonial, or evidence that OpenReady helped publish a real repository. Downloads, clones, stars, viewing the GIF, maintainer runs, and comments without a confirmed run do not count.
+
+| Smoke run | Date | Environment and version | Demo completed | Specific observation | Public evidence |
+| --- | --- | --- | --- | --- | --- |
+| _0 — no independent synthetic demo run verified_ |  |  |  |  |  |
+
 ## Fastest privacy-safe feedback
 
 After one real run, a participant can post this single line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
@@ -68,7 +84,7 @@ Consent to quote feedback publicly: yes / no
 
 ## Evidence register
 
-Do not add a participant row unless an optional real run actually occurs.
+Do not add a participant row unless an optional real run on a repository the participant is authorized to inspect actually occurs. Synthetic demo runs belong only in the separate smoke-test table above.
 
 | Run | Date | Environment | First scan completed | Feedback recorded | Follow-up |
 | --- | --- | --- | --- | --- | --- |
@@ -100,19 +116,20 @@ For each actionable result:
 
 ## Metrics state
 
-Snapshot time: 2026-08-13 09:41 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
+Snapshot time: 2026-08-14 12:31 UTC+8. Metrics can lag; later values must be read from their live sources rather than inferred from this snapshot.
 
 | Signal | Current evidence |
 | --- | --- |
 | Real beta runs | Intentionally skipped for v0.1.0; 0 verified runs |
+| Independent synthetic demo runs | 0 verified runs; maintained separately from real-repository testing |
 | Public users | 0 verified users |
-| Downloads | npm's explicit-date API reports 75 downloads on 2026-08-11, 0 on 2026-08-12, and 0 on 2026-08-13 at snapshot time. Download events do not prove users and may include maintainer or automated registry activity. The v0.1.2 publication is too recent for this snapshot to measure. |
+| Downloads | npm's explicit-date API reports 75 downloads on 2026-08-11, 0 on 2026-08-12, 174 on 2026-08-13, and 0 on 2026-08-14 at snapshot time. Download events do not prove users and may include maintainer or automated registry activity. |
 | Stars / forks / watchers | 0 / 0 / 0 from GitHub |
-| Public issues / pull requests | 0 user issues; 0 external pull requests; 2 merged maintainer pull requests |
-| GitHub traffic | 2 views / 1 unique visitor and 49 clones / 18 unique cloners in the owner traffic endpoint, all reported on 2026-08-11. This traffic is unattributed and is not counted as verified user adoption. |
-| GitHub Discussions | 1 launch announcement; 0 comments at snapshot time |
+| Public issues / pull requests | 0 user issues; 0 external pull requests; 4 merged maintainer pull requests |
+| GitHub traffic | The owner traffic endpoint reports 6 views / 3 unique visitors and 194 clones / 76 unique cloners across its current 14-day window. Its latest complete daily bucket, 2026-08-13, reports 1 view / 1 unique visitor and 89 clones / 44 unique cloners. This traffic is unattributed and is not counted as verified user adoption. |
+| GitHub Discussions | 1 launch announcement; 0 comments and 1 unattributed upvote at snapshot time |
 | Open-source directory requests | 2 form submission acknowledgements; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
 | Published releases | GitHub v0.1.0, v0.1.1, and v0.1.2; npm latest is v0.1.2 |
-| Maintenance checks | Main CI for `a8d41f8` passed on Node.js 20, 22, and 24. Local tests passed 48 with 0 failures and 1 platform-limited skip; the v0.1.2 package contained 22 reviewed files; source and fresh installed-package scans returned `READY`. |
+| Maintenance checks | Main CI for `a8d41f8` passed on Node.js 20, 22, and 24. The current v0.2.0 candidate's local suite reports 57 tests, 56 passed, 0 failed, and 1 platform-limited skip; its package dry-run listed 23 intended files, its source self-scan returned `READY`, and its direct synthetic demo completed with the expected result and cleanup. A fresh install from the local v0.2.0 tarball reported version `0.2.0`, completed the demo, and returned `READY` for the installed-package scan. The published v0.1.2 package contained 22 reviewed files. |
 
 These fields must remain explicit rather than being estimated or backfilled.

@@ -9,13 +9,23 @@ permissions:
 
 jobs:
   test:
-    name: Node.js ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }} / Node.js ${{ matrix.node-version }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        include:
+          - os: ubuntu-latest
+            node-version: 20.x
+          - os: ubuntu-latest
+            node-version: 22.x
+          - os: ubuntu-latest
+            node-version: 24.x
+          - os: macos-latest
+            node-version: 20.x
+          - os: windows-latest
+            node-version: 20.x
 
     steps:
       - name: Check out repository

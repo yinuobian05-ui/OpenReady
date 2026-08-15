@@ -4,7 +4,7 @@ OpenReady processes repositories that may contain sensitive material. Its output
 
 ## Supported versions
 
-`0.1.x` is the current supported line. Version `0.1.2` is published on npm and GitHub. Security fixes will be documented in the changelog and release notes.
+`0.1.x` is the current published supported line. Version `0.1.2` is published on npm and GitHub; v0.2.0 is an unreleased candidate until its package, tag, and release are verified. Security fixes will be documented in the changelog and release notes.
 
 ## Reporting a vulnerability
 
@@ -22,8 +22,8 @@ Include only:
 
 ## Security model
 
-OpenReady is intended to be offline and read-only. It does not validate credentials against provider APIs, upload results, follow symlinks, unpack archives, or modify the target repository. It may inspect a symlink's stored target string for privacy traces, but it does not open the target.
+The OpenReady `scan` command is intended to be offline and read-only. It does not validate credentials against provider APIs, upload results, follow symlinks, unpack archives, or modify the target repository. It may inspect a symlink's stored target string for privacy traces, but it does not open the target. The `demo` command does not scan the current directory; it creates only fixed fictional files in a unique operating-system temporary directory and removes that exact directory after the expected scan completes.
 
-It is not a sandbox for hostile repositories. It invokes local Git commands for candidate files and author metadata, and it reads a live working-tree snapshot. Repository-controlled, relative, and `node_modules/.bin` executable paths are removed before invoking Git, but the remaining absolute `PATH` and Git installation must still be trusted. Use it on repositories you trust locally. If a finding may represent a real credential, revoke or rotate the credential before investigating repository history.
+It is not a sandbox for hostile repositories. It invokes local Git commands for candidate files and author metadata, and it reads a live working-tree snapshot. Executable paths inside the scan root, the current directory, detected ancestor Git worktrees, and `node_modules/.bin` are removed before invoking Git; the resolved executable is checked against the same boundaries. The remaining absolute `PATH` and Git installation must still be trusted. Use it on repositories you trust locally. If a finding may represent a real credential, revoke or rotate the credential before investigating repository history.
 
 The absence of findings is not a security guarantee. Pair OpenReady with a maintained, history-aware secret scanner and human review before publication.

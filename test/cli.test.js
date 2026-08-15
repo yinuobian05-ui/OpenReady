@@ -1,23 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
+import {
+  access,
+  chmod,
+  mkdir,
+  readFile,
+  writeFile,
+} from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatError } from '../src/formatters.js';
+import { resolveGitExecutable } from '../src/git.js';
 import { sanitizeDisplayPath } from '../src/path-utils.js';
 import {
   createSyntheticRepository,
+  initializeGit,
   makeTemporaryWorkspace,
 } from './fixtures/synthetic-repository.js';
 
 const BIN = fileURLToPath(new URL('../bin/openready.js', import.meta.url));
 const PACKAGE_JSON = fileURLToPath(new URL('../package.json', import.meta.url));
 
-function runCli(args, cwd) {
+function runCli(args, cwd, extraEnvironment = {}) {
   return spawnSync(process.execPath, [BIN, ...args], {
     cwd,
     encoding: 'utf8',
+    env: { ...process.env, ...extraEnvironment },
     shell: false,
     windowsHide: true,
   });
@@ -156,13 +165,99 @@ test('an execution error exits two with one JSON error document', async () => {
 });
 
 test('help and version exit zero while invalid usage exits two', () => {
-  assert.equal(runCli(['--help']).status, 0);
+  const help = runCli(['--help']);
+  assert.equal(help.status, 0);
+  assert.match(help.stdout, /openready demo/);
   assert.equal(runCli(['--version']).status, 0);
   assert.equal(runCli(['unknown']).status, 2);
   assert.equal(runCli(['scan', '.', '.', '--json']).status, 2);
+  assert.equal(runCli(['demo', '--json']).status, 2);
   const invalidJson = runCli(['scan', '--unknown', '--json']);
   assert.equal(invalidJson.status, 2);
   assert.doesNotThrow(() => JSON.parse(invalidJson.stderr));
+});
+
+test('synthetic demo completes without reading or changing the current directory', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  try {
+    const sentinelPath = path.join(fixture.root, 'personal-project-file.txt');
+    const sentinelContent = 'private-current-directory-sentinel\n';
+    await writeFile(sentinelPath, sentinelContent);
+    const environmentSentinels = [
+      'private-user-sentinel',
+      'private-profile-sentinel',
+      ['private-author-sentinel', 'example.invalid'].join('@'),
+      'private-npm-sentinel',
+    ];
+    const gitAuthorEmailKey = ['GIT', 'AUTHOR', 'EMAIL'].join('_');
+    const npmTokenKey = ['NPM', 'TOKEN'].join('_');
+    const run = runCli(['demo'], fixture.root, {
+      USER: environmentSentinels[0],
+      USERPROFILE: environmentSentinels[1],
+      [gitAuthorEmailKey]: environmentSentinels[2],
+      [npmTokenKey]: environmentSentinels[3],
+    });
+
+    assert.equal(run.status, 0, run.stderr);
+    assert.equal(run.stderr, '');
+    assert.match(run.stdout, /synthetic demo completed/i);
+    assert.match(run.stdout, /BLOCKED result above is expected/i);
+    assert.match(run.stdout, /temporary synthetic files were removed/i);
+    assert.match(run.stdout, /not evidence of real-repository use or adoption/i);
+    assert.equal(await readFile(sentinelPath, 'utf8'), sentinelContent);
+    assert.equal(run.stdout.includes(sentinelContent.trim()), false);
+    for (const sentinel of environmentSentinels) {
+      assert.equal(run.stdout.includes(sentinel), false);
+      assert.equal(run.stderr.includes(sentinel), false);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('synthetic demo ignores Git from an ancestor repository sibling PATH directory', async (t) => {
+  if (process.platform === 'win32') {
+    t.skip('POSIX executable behavior required');
+    return;
+  }
+
+  const fixture = await makeTemporaryWorkspace();
+  try {
+    await initializeGit(fixture.root);
+    const nestedDirectory = path.join(fixture.root, 'subdir');
+    const repositoryBin = path.join(fixture.root, 'bin');
+    await Promise.all([
+      mkdir(nestedDirectory, { recursive: true }),
+      mkdir(repositoryBin, { recursive: true }),
+    ]);
+
+    const trustedGit = resolveGitExecutable(fixture.root);
+    const markerPath = path.join(fixture.workspace, 'repository-git-ran.marker');
+    const fakeGit = path.join(repositoryBin, 'git');
+    await writeFile(
+      fakeGit,
+      '#!/bin/sh\n: > "$OPENREADY_TEST_MARKER"\nexit 99\n',
+    );
+    await chmod(fakeGit, 0o755);
+
+    const environment = {
+      OPENREADY_TEST_MARKER: markerPath,
+      PATH: `${repositoryBin}${path.delimiter}${path.dirname(trustedGit)}`,
+    };
+    const run = runCli(['demo'], nestedDirectory, environment);
+    assert.equal(run.status, 0, run.stderr);
+    assert.match(run.stdout, /synthetic demo completed/i);
+    await assert.rejects(() => access(markerPath), { code: 'ENOENT' });
+
+    const noFallback = runCli(['demo'], nestedDirectory, {
+      ...environment,
+      PATH: repositoryBin,
+    });
+    assert.equal(noFallback.status, 2);
+    await assert.rejects(() => access(markerPath), { code: 'ENOENT' });
+  } finally {
+    await fixture.cleanup();
+  }
 });
 
 test('CLI version stays synchronized with package metadata', async () => {

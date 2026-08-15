@@ -4,7 +4,7 @@
 
 OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
-OpenReady v0.2.0 adds a safe first step for trying its output without giving it access to your repository:
+OpenReady v0.2.0 adds a safe first step. Once the public npm endpoint reports that version, try its output without giving OpenReady access to your repository:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" demo
@@ -16,7 +16,7 @@ npx --yes "@yb5/openready@0.2.0" demo
 - Matched secret values and Git identities are never printed.
 - It has zero runtime dependencies and requires Node.js 20 or newer. Git is required for the synthetic demo and repository metadata checks.
 
-When you are ready, scan only a repository you are authorized to inspect:
+After the package is available, scan only a repository you are authorized to inspect:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" scan .
@@ -44,7 +44,7 @@ This first run has a design target of under five minutes. No measured human timi
 
 Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-author checks.
 
-Run the pinned v0.2.0 npm package from the repository you want to check:
+Once the public npm endpoint reports v0.2.0, run that pinned package from the repository you want to check:
 
 ```sh
 npx --yes "@yb5/openready@0.2.0" scan .

@@ -13,7 +13,7 @@ Three independent AI roles performed a synthetic pre-release evaluation of the C
 Someone can first confirm that the package runs and that the redacted output is understandable without scanning personal files:
 
 ```sh
-npx --yes "@yb5/openready@0.2.0" demo
+npx --yes "@yb5/openready@0.2.1" demo
 ```
 
 The command creates only fixed fictional files in a unique operating-system temporary directory, scans them locally, and removes that exact directory. Its expected synthetic `BLOCKED` result demonstrates rule categories; successful demo completion exits `0`.

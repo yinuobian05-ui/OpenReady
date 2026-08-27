@@ -204,6 +204,12 @@ test('synthetic demo completes without reading or changing the current directory
     assert.match(run.stdout, /BLOCKED result above is expected/i);
     assert.match(run.stdout, /temporary synthetic files were removed/i);
     assert.match(run.stdout, /not evidence of real-repository use or adoption/i);
+    assert.match(run.stdout, /repository you are authorized to inspect/i);
+    assert.match(
+      run.stdout,
+      /npx --yes "@yb5\/openready@0\.2\.1" scan \./,
+    );
+    assert.match(run.stdout, /issues\/new\?template=first_run_feedback\.yml/);
     assert.equal(await readFile(sentinelPath, 'utf8'), sentinelContent);
     assert.equal(run.stdout.includes(sentinelContent.trim()), false);
     for (const sentinel of environmentSentinels) {

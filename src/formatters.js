@@ -1,6 +1,8 @@
 import { TOOL_NAME, VERSION } from './constants.js';
 
 const FEEDBACK_URL = 'https://github.com/yinuobian05-ui/OpenReady/discussions/1';
+const DEMO_FEEDBACK_URL =
+  'https://github.com/yinuobian05-ui/OpenReady/issues/new?template=first_run_feedback.yml';
 
 export function formatText(result) {
   const lines = [
@@ -58,8 +60,11 @@ export function formatDemoText(result) {
   lines.push('The temporary synthetic files were removed.');
   lines.push('This smoke test is not evidence of real-repository use or adoption.');
   lines.push('');
+  lines.push('Next, from a repository you are authorized to inspect:');
+  lines.push(`npx --yes "@yb5/openready@${result.version}" scan .`);
+  lines.push('');
   lines.push('Privacy-safe demo feedback (never paste terminal output or repository data):');
-  lines.push(FEEDBACK_URL);
+  lines.push(DEMO_FEEDBACK_URL);
   lines.push(
     'OS / Node major / OpenReady version / demo completed? / one observation / ' +
     'would try on an authorized repo?',

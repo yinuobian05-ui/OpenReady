@@ -4,37 +4,31 @@
 
 OpenReady checks for credential-shaped content, personal paths and emails, Git author metadata, risky files, large media, and missing open-source governance files in one read-only scan.
 
-OpenReady v0.2.0 adds a safe first step. Try its output without giving OpenReady access to your repository:
+## Try the safe demo first
+
+Start with a fixed synthetic demo. It does not scan the current directory or any personal repository:
+
+Requirements: Node.js 20 or newer and a trusted local Git installation. `npx` may download the pinned package before the first run.
 
 ```sh
-npx --yes "@yb5/openready@0.2.0" demo
+npx --yes "@yb5/openready@0.2.1" demo
 ```
 
-- `npx` may download the package before it starts. The demo then runs locally with no telemetry.
-- The demo does not scan the current directory. It creates only fixed fictional files in a unique operating-system temporary directory and removes that exact directory after the run.
-- The `scan` command changes no files, follows no symlinks, and sends no telemetry.
-- Matched secret values and Git identities are never printed.
-- It has zero runtime dependencies and requires Node.js 20 or newer. Git is required for the synthetic demo and repository metadata checks.
+Success looks like a synthetic `BLOCKED` report followed by a cleanup confirmation. The command returns exit code `0`; the blockers are intentional, and no personal repository was scanned.
+
+If you stop after the demo, the most useful report is whether it finished and which finding or instruction was hardest to understand. Share one privacy-safe observation plus basic verification details in the [first-run feedback form](https://github.com/yinuobian05-ui/OpenReady/issues/new?template=first_run_feedback.yml). Never paste terminal output, repository contents, credentials, logs, or personal information.
+
+## Scan an authorized repository
 
 After the synthetic demo, scan only a repository you are authorized to inspect:
 
 ```sh
-npx --yes "@yb5/openready@0.2.0" scan .
+npx --yes "@yb5/openready@0.2.1" scan .
 ```
 
-![OpenReady v0.1.1 contrasting BLOCKED and READY results from fully synthetic repositories](assets/openready-terminal-demo.gif)
+The scan runs locally, changes no files, follows no symlinks, sends no telemetry, and never prints matched secret values or Git identities. OpenReady has zero runtime dependencies.
 
-This v0.1.1 recording remains behaviorally representative for the `scan` command in v0.2.0. It uses two fully synthetic Git repositories and excerpted actual CLI output. A scan result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review. The new `demo` command intentionally produces a synthetic `BLOCKED` result but exits `0` when setup, scanning, and cleanup all succeed.
-
-After the synthetic demo, you may share this privacy-safe line in the [launch discussion](https://github.com/yinuobian05-ui/OpenReady/discussions/1):
-
-```text
-OS / Node major / OpenReady version / demo completed? / one observation / would try on an authorized repo?
-```
-
-That records only an independent synthetic smoke test, not real-repository use or adoption. A verified real-repository test additionally requires the person to scan a repository they are authorized to inspect and give a specific privacy-safe observation.
-
-Do not paste scan output, repository contents, credentials, logs, or personal information.
+A scan result is either `BLOCKED`, which exits `1`, or `READY`, which exits `0` but can still contain warnings for human review. A reported demo completion is only a synthetic smoke test. It is not evidence of real-repository use or adoption.
 
 > OpenReady does not guarantee that a repository is safe to publish. It does not replace a history-aware secret scanner, legal review, or copyright review.
 
@@ -47,27 +41,27 @@ Requirements: Node.js 20 or newer. Git is needed for tracked-file and commit-aut
 Run the pinned public package from the repository you want to check:
 
 ```sh
-npx --yes "@yb5/openready@0.2.0" scan .
+npx --yes "@yb5/openready@0.2.1" scan .
 ```
 
-This command downloads the pinned package from npm for the first run. The scan itself is offline, read-only, and has no telemetry.
+This command may download the pinned package from npm for the first run. The scan itself is offline, read-only, and has no telemetry.
 
 For JSON output:
 
 ```sh
-npx --yes "@yb5/openready@0.2.0" scan . --json
+npx --yes "@yb5/openready@0.2.1" scan . --json
 ```
 
 To pin the source archive instead of using the npm registry:
 
 ```sh
-npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.2.0.tar.gz scan .
+npx --yes https://github.com/yinuobian05-ui/OpenReady/archive/v0.2.1.tar.gz scan .
 ```
 
 If you prefer to inspect and run the source checkout instead:
 
 ```sh
-git clone --branch v0.2.0 https://github.com/yinuobian05-ui/OpenReady.git
+git clone --branch v0.2.1 https://github.com/yinuobian05-ui/OpenReady.git
 cd OpenReady
 node ./bin/openready.js scan /path/to/your-project
 ```
@@ -119,7 +113,7 @@ jobs:
           npm_config_registry: https://registry.npmjs.org/
         run: |
           cd "$RUNNER_TEMP"
-          npx --yes "@yb5/openready@0.2.0" scan "$GITHUB_WORKSPACE"
+          npx --yes "@yb5/openready@0.2.1" scan "$GITHUB_WORKSPACE"
 ```
 
 The workflow starts npm outside the checked-out repository, fixes the public registry, and disables package lifecycle scripts before downloading the pinned package. It fails when OpenReady finds a blocker or cannot complete reliably; warnings alone do not fail it. The scan itself remains read-only and sends no telemetry. GitHub Actions logs may reveal relative file paths and rule categories, so keep the local command as the default for material that should not appear in hosted CI logs.
@@ -265,6 +259,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for rule and fixture requirements, [SECUR
 
 ## Project status
 
-This source tree and package metadata are version `0.2.0`. Verify the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases) at those endpoints; publication is complete only when the npm package, Git tag, and GitHub release agree. OpenReady is maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed. Synthetic demo runs remain a separate smoke-test signal.
+This source tree and package metadata are version `0.2.1`. Verify the current public [npm package](https://www.npmjs.com/package/@yb5/openready) and [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases) at those endpoints; publication is complete only when the npm package, Git tag, and GitHub release agree. OpenReady is maintained by Yinuo Bian (`@yinuobian05-ui`) at [yinuobian05-ui/OpenReady](https://github.com/yinuobian05-ui/OpenReady). GitHub Private Vulnerability Reporting is enabled. No verified independent human run, adoption, review, or impact is claimed. Synthetic demo runs remain a separate smoke-test signal.
 
 Licensed under the MIT License.

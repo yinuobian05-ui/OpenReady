@@ -1,8 +1,10 @@
 # r/ChatGPTCoding weekly self-promotion draft
 
-Status: READY TO POST — v0.2.1 PUBLICLY VERIFIED, NOT POSTED
+Status: POSTED — 2026-08-27; v0.2.1 was publicly verified before posting
 
 Target: the current [r/ChatGPTCoding Weekly Self Promotion Thread](https://www.reddit.com/r/ChatGPTCoding/comments/1vwwbap/weekly_self_promotion_thread/).
+
+Public comment: [permalink](https://old.reddit.com/r/ChatGPTCoding/comments/1vwwbap/weekly_self_promotion_thread/p65kw3j/).
 
 ## Draft
 

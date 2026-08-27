@@ -58,6 +58,69 @@ jobs:
       - name: Audit package contents
         run: npm pack --dry-run --ignore-scripts
 
+      - name: Verify release contents stayed clean
+        shell: bash
+        run: |
+          release_status=
+          if ! release_status=$(git status --porcelain=v1 --untracked-files=all); then
+            echo "Could not verify the release working tree." >&2
+            exit 1
+          fi
+          if [[ -n "$release_status" ]]; then
+            printf '%s\n' "$release_status"
+            echo "Tests or packaging modified the release contents." >&2
+            exit 1
+          fi
+
+      - name: Remove verified checkout-only sparse-worktree residue
+        shell: bash
+        run: |
+          config_file=.git/config.worktree
+          if [[ -L "$config_file" ]]; then
+            echo "Unexpected config.worktree file type." >&2
+            exit 1
+          fi
+          if [[ ! -e "$config_file" ]]; then
+            exit 0
+          fi
+          if [[ ! -f "$config_file" ]]; then
+            echo "Unexpected config.worktree file type." >&2
+            exit 1
+          fi
+          if (( $(wc -c < "$config_file") > 1048576 )); then
+            echo "Unexpected config.worktree size." >&2
+            exit 1
+          fi
+          if git config --local --get-all extensions.worktreeConfig >/dev/null; then
+            echo "extensions.worktreeConfig is still enabled." >&2
+            exit 1
+          fi
+          if ! git config --file "$config_file" --list >/dev/null; then
+            echo "Malformed config.worktree file." >&2
+            exit 1
+          fi
+          while IFS= read -r key; do
+            case "$key" in
+              core.sparsecheckout|core.sparsecheckoutcone|index.sparse) ;;
+              *)
+                echo "Unexpected checkout-only config.worktree key." >&2
+                exit 1
+                ;;
+            esac
+          done < <(git config --file "$config_file" --name-only --list)
+          for key in core.sparsecheckout core.sparsecheckoutcone index.sparse; do
+            mapfile -t values < <(git config --file "$config_file" --get-all "$key")
+            if (( ${#values[@]} > 1 )); then
+              echo "Duplicate checkout-only config.worktree value." >&2
+              exit 1
+            fi
+            if (( ${#values[@]} == 1 )) && [[ "${values[0]}" != false ]]; then
+              echo "Unexpected checkout-only config.worktree value." >&2
+              exit 1
+            fi
+          done
+          rm -- "$config_file"
+
       - name: Run source self-scan
         run: node ./bin/openready.js scan . --json
 

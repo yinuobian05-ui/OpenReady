@@ -1,0 +1,60 @@
+name: First-run feedback
+description: Share one privacy-safe observation after running the fixed synthetic demo.
+title: "[Demo feedback]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for trying OpenReady. Do not paste terminal output, repository contents, credentials, logs, personal information, or unredacted paths. This form records a synthetic smoke test only, not real-repository use or adoption.
+
+  - type: input
+    id: version
+    attributes:
+      label: OpenReady version
+      placeholder: 0.2.x (copy the version from the first output line)
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system and Node.js major version only.
+      placeholder: macOS, Node.js 24
+    validations:
+      required: true
+
+  - type: dropdown
+    id: completion
+    attributes:
+      label: Did the synthetic demo complete?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
+  - type: textarea
+    id: observation
+    attributes:
+      label: One specific observation
+      description: If the demo stopped, where did it stop? Otherwise, which finding or instruction was most useful or hardest to understand? Describe it without copying output.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: authorized_scan
+    attributes:
+      label: Would you consider trying OpenReady on a repository you are authorized to inspect?
+      options:
+        - "Yes"
+        - "Maybe"
+        - "No"
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I did not include terminal output, repository data, credentials, logs, personal information, or unredacted paths.
+          required: true

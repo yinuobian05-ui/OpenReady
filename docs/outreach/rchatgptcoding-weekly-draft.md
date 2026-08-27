@@ -1,19 +1,19 @@
 # r/ChatGPTCoding weekly self-promotion draft
 
-Status: DRAFT — NOT POSTED
+Status: READY TO POST — v0.2.1 PUBLICLY VERIFIED, NOT POSTED
 
-Target: the current r/ChatGPTCoding Weekly Self Promotion Thread.
+Target: the current [r/ChatGPTCoding Weekly Self Promotion Thread](https://www.reddit.com/r/ChatGPTCoding/comments/1vwwbap/weekly_self_promotion_thread/).
 
 ## Draft
 
-Disclosure: I maintain OpenReady, a free MIT-licensed Node.js CLI. For people using Codex, Claude Code, Cursor, or similar tools, it adds a deterministic final check before a Git repository becomes public—without asking another model to review the same work.
+Disclosure: I maintain OpenReady, a free MIT-licensed Node.js CLI. For people shipping repositories after using Codex, Claude Code, Cursor, or similar tools, it provides a deterministic pre-publication hygiene check without sending the repository to another model.
 
-OpenReady uses no AI model at runtime and does not upload code. Its read-only local scan checks for credential-shaped content, personal paths and email addresses, Git author metadata, risky files, large media, and missing open-source governance files. It has zero runtime dependencies and no telemetry, and it never prints matched secret values or Git identities.
+OpenReady itself uses no AI model. Its read-only local scan checks for credential-shaped content, personal paths and email addresses, Git author metadata, risky files, large media, and missing open-source governance files. It has zero runtime dependencies and no telemetry, and it never prints matched secret values or Git identities.
 
-You can try its output on fixed fictional files before giving it access to a repository:
+You can try its output on fixed fictional files first. The demo does not scan the current directory:
 
 ```sh
-npx --yes "@yb5/openready@0.2.0" demo
+npx --yes "@yb5/openready@0.2.1" demo
 ```
 
 It requires Node.js 20+ and Git; `npx` may download the pinned package first. A synthetic `BLOCKED` result is expected. A successful demo removes its temporary files and exits `0`.
@@ -30,4 +30,4 @@ Repository: https://github.com/yinuobian05-ui/OpenReady
 - Keep the maintainer disclosure.
 - Do not request stars, upvotes, testimonials, or reciprocal engagement.
 - Do not repost weekly without a material product change.
-- Keep the verified v0.2.0 command unless v0.2.1 has been independently verified at npm, its Git tag, and its GitHub Release.
+- Use the pinned v0.2.1 command; npm metadata, the annotated Git tag, the GitHub Release, the 23-file tarball, and a fresh unauthenticated demo were independently verified on 2026-08-27.

@@ -18,7 +18,6 @@ const REQUIRED_RULE_IDS = Object.freeze([
   'OR-SEC-003',
   'OR-SEC-004',
   'OR-SEC-005',
-  'OR-META-003',
   'OR-PRIV-001',
   'OR-PRIV-002',
   'OR-BND-011',

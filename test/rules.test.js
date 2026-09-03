@@ -5,6 +5,7 @@ import path from 'node:path';
 import { scanRepository } from '../src/scanner.js';
 import {
   createSyntheticRepository,
+  initializeGit,
   makeTemporaryWorkspace,
   runFixtureGit,
   syntheticValues,
@@ -20,6 +21,15 @@ function findingLines(result, findingPath, ruleId) {
     .filter((finding) => finding.path === findingPath && finding.ruleId === ruleId)
     .map((finding) => finding.line)
     .sort((left, right) => left - right);
+}
+
+function syntheticIdentity(values) {
+  return {
+    GIT_AUTHOR_NAME: values.authorName,
+    GIT_AUTHOR_EMAIL: values.email,
+    GIT_COMMITTER_NAME: values.authorName,
+    GIT_COMMITTER_EMAIL: values.email,
+  };
 }
 
 test('detects core synthetic risks without retaining matched values', async () => {
@@ -555,11 +565,213 @@ test('aggregates Git author metadata without exposing identities', async () => {
     const ids = ruleIds(result);
     assert.ok(ids.has('OR-META-001'));
     assert.ok(ids.has('OR-META-002'));
-    assert.ok(ids.has('OR-META-003'));
+    assert.ok(ids.has('OR-BND-013'));
 
     const serialized = JSON.stringify(result);
     assert.equal(serialized.includes(fixture.values.authorName), false);
     assert.equal(serialized.includes(fixture.values.email), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('does not claim that reachable history exists in an unborn repository', async () => {
+  const fixture = await createSyntheticRepository();
+  try {
+    const result = await scanRepository(fixture.root);
+    assert.equal(ruleIds(result).has('OR-BND-013'), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('detects a credential removed from the index and working tree but retained in history', async () => {
+  const fixture = await createSyntheticRepository({ commit: true });
+  const identity = syntheticIdentity(fixture.values);
+  try {
+    const historicalPath = path.join(fixture.root, 'historical-credential.txt');
+    await writeFile(historicalPath, `${fixture.values.token}\n`);
+    runFixtureGit(fixture.root, ['add', 'historical-credential.txt']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add synthetic history fixture'], identity);
+    await rm(historicalPath);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Remove synthetic history fixture'], identity);
+
+    const head = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+    const result = await scanRepository(fixture.root);
+    const historicalFinding = result.findings.find((finding) => (
+      finding.ruleId === 'OR-HIST-001' && finding.path === '.git/history'
+    ));
+
+    assert.ok(historicalFinding);
+    assert.equal(historicalFinding.line, undefined);
+    assert.equal(result.status, 'BLOCKED');
+    assert.equal(
+      result.findings.some((finding) => (
+        finding.path === '.git/history' && finding.ruleId.startsWith('OR-SEC-')
+      )),
+      false,
+    );
+    const serialized = JSON.stringify(result);
+    assert.equal(serialized.includes(fixture.values.token), false);
+    assert.equal(serialized.includes(head), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('deduplicates one historical blob referenced by multiple deleted paths', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  const values = syntheticValues();
+  const identity = syntheticIdentity(values);
+  const secretText = `${values.token}\n`;
+  try {
+    await initializeGit(fixture.root);
+    await Promise.all([
+      writeFile(path.join(fixture.root, 'first.txt'), secretText),
+      writeFile(path.join(fixture.root, 'second.txt'), secretText),
+    ]);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add duplicate history fixture'], identity);
+    await Promise.all([
+      rm(path.join(fixture.root, 'first.txt')),
+      rm(path.join(fixture.root, 'second.txt')),
+    ]);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Remove duplicate history fixture'], identity);
+
+    const result = await scanRepository(fixture.root, {
+      limits: { totalContentScanBytes: Buffer.byteLength(secretText) },
+    });
+    const historicalFindings = result.findings.filter(
+      (finding) => finding.ruleId === 'OR-HIST-001' && finding.path === '.git/history',
+    );
+    assert.equal(result.status, 'BLOCKED');
+    assert.equal(historicalFindings.length, 1);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('fails closed when reachable historical content exceeds the total byte budget', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  const values = syntheticValues();
+  const identity = syntheticIdentity(values);
+  const secretText = `${values.token}\n`;
+  try {
+    await initializeGit(fixture.root);
+    const historicalPath = path.join(fixture.root, 'deleted-secret.txt');
+    await writeFile(historicalPath, secretText);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add budget history fixture'], identity);
+    await rm(historicalPath);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Remove budget history fixture'], identity);
+    const head = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+
+    await assert.rejects(
+      () => scanRepository(fixture.root, {
+        limits: { totalContentScanBytes: Buffer.byteLength(secretText) - 1 },
+      }),
+      (error) => {
+        assert.equal(error.code, 'SCAN_LIMIT_EXCEEDED');
+        assert.equal(error.message.includes(values.token), false);
+        assert.equal(error.message.includes(head), false);
+        assert.equal(error.message.includes(values.authorName), false);
+        assert.equal(error.message.includes(values.email), false);
+        return true;
+      },
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('detects a deleted credential reachable only from a non-HEAD local ref', async () => {
+  const fixture = await createSyntheticRepository({ commit: true });
+  const identity = syntheticIdentity(fixture.values);
+  try {
+    const originalBranch = runFixtureGit(
+      fixture.root,
+      ['symbolic-ref', '--short', 'HEAD'],
+    ).trim();
+    runFixtureGit(fixture.root, ['checkout', '--quiet', '-b', 'synthetic-history-ref']);
+    const secretPath = path.join(fixture.root, 'branch-only-secret.txt');
+    await writeFile(secretPath, `${fixture.values.token}\n`);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add branch history fixture'], identity);
+    const secretCommit = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+    runFixtureGit(fixture.root, ['checkout', '--quiet', originalBranch]);
+
+    const result = await scanRepository(fixture.root);
+    assert.ok(result.findings.some((finding) => finding.ruleId === 'OR-HIST-001'));
+    assert.equal(result.status, 'BLOCKED');
+    assert.equal(JSON.stringify(result).includes(fixture.values.token), false);
+    assert.equal(JSON.stringify(result).includes(secretCommit), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('supports SHA-256 object identifiers when the installed Git provides them', async (t) => {
+  const fixture = await makeTemporaryWorkspace();
+  const values = syntheticValues();
+  const identity = syntheticIdentity(values);
+  try {
+    try {
+      runFixtureGit(
+        fixture.root,
+        ['init', '--quiet', '--template=', '--object-format=sha256'],
+      );
+    } catch {
+      t.skip('installed Git does not support SHA-256 repositories');
+      return;
+    }
+    const secretPath = path.join(fixture.root, 'sha256-history-secret.txt');
+    await writeFile(secretPath, `${values.token}\n`);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add SHA-256 history fixture'], identity);
+    await rm(secretPath);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Remove SHA-256 history fixture'], identity);
+    const head = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+
+    const result = await scanRepository(fixture.root);
+    assert.equal(head.length, 64);
+    assert.ok(result.findings.some((finding) => finding.ruleId === 'OR-HIST-001'));
+    assert.equal(JSON.stringify(result).includes(values.token), false);
+    assert.equal(JSON.stringify(result).includes(head), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('reports binary and over-limit historical blobs without claiming they were inspected', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  const values = syntheticValues();
+  const identity = syntheticIdentity(values);
+  try {
+    await initializeGit(fixture.root);
+    const binaryPath = path.join(fixture.root, 'historical-binary.bin');
+    const largeTextPath = path.join(fixture.root, 'historical-large.txt');
+    await Promise.all([
+      writeFile(binaryPath, Buffer.from([0, 1, 2, 3])),
+      writeFile(largeTextPath, 'bounded historical text fixture\n'),
+    ]);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add bounded history fixtures'], identity);
+    await Promise.all([rm(binaryPath), rm(largeTextPath)]);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Remove bounded history fixtures'], identity);
+
+    const result = await scanRepository(fixture.root, { limits: { contentScanBytes: 16 } });
+    assert.equal(result.status, 'READY');
+    assert.ok(result.findings.some((finding) => finding.ruleId === 'OR-BND-013'));
+    assert.equal(
+      result.findings.filter((finding) => finding.ruleId === 'OR-BND-014').length,
+      1,
+    );
+    assert.equal(result.findings.some((finding) => finding.ruleId.startsWith('OR-HIST-')), false);
   } finally {
     await fixture.cleanup();
   }

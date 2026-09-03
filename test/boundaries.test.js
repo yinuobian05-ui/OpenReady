@@ -169,6 +169,66 @@ test('rejects Git config includes instead of reading redirected configuration', 
   }
 });
 
+test('fails closed on standard Git linked-worktree metadata', async () => {
+  const fixture = await createSyntheticRepository({ commit: true });
+  const linkedRoot = path.join(fixture.workspace, 'linked-worktree');
+  try {
+    runFixtureGit(fixture.root, ['worktree', 'add', '--quiet', '--detach', linkedRoot, 'HEAD']);
+    await assert.rejects(
+      () => scanRepository(linkedRoot),
+      { code: 'GIT_METADATA_UNSAFE' },
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('fails closed when Git metadata uses a separate directory', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  const metadataRoot = path.join(fixture.workspace, 'separate-git-metadata');
+  try {
+    runFixtureGit(
+      fixture.root,
+      ['init', '--quiet', '--template=', `--separate-git-dir=${metadataRoot}`],
+    );
+    await assert.rejects(
+      () => scanRepository(fixture.root),
+      { code: 'GIT_METADATA_UNSAFE' },
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('fails closed when shallow metadata makes earlier history unavailable', async () => {
+  const fixture = await createSyntheticRepository({ commit: true });
+  try {
+    const head = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+    await writeFile(path.join(fixture.root, '.git', 'shallow'), `${head}\n`);
+    await assert.rejects(
+      () => scanRepository(fixture.root),
+      { code: 'GIT_HISTORY_INCOMPLETE' },
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test('fails closed when a nonempty grafts file can hide commit parents', async () => {
+  const fixture = await createSyntheticRepository({ commit: true });
+  try {
+    const head = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+    await mkdir(path.join(fixture.root, '.git', 'info'), { recursive: true });
+    await writeFile(path.join(fixture.root, '.git', 'info', 'grafts'), `${head}\n`);
+    await assert.rejects(
+      () => scanRepository(fixture.root),
+      { code: 'GIT_HISTORY_INCOMPLETE' },
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('rejects unsafe Git variables placed on the section-header line', async () => {
   const unsafeLines = [
     '[extensions] partialClone = synthetic-origin',

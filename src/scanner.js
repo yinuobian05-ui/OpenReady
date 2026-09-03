@@ -9,7 +9,13 @@ import {
   isExternalSymlinkTarget,
 } from './files.js';
 import { FindingCollector, summarize } from './findings.js';
-import { indexContentScanLimit, inspectGit, readIndexBlobs } from './git.js';
+import {
+  historyContentScanLimit,
+  indexContentScanLimit,
+  inspectGit,
+  readHistoryBlobs,
+  readIndexBlobs,
+} from './git.js';
 import { fileRuleIds, governanceFindings } from './rules.js';
 
 async function validateRoot(inputPath) {
@@ -68,7 +74,7 @@ export async function scanRepository(inputPath = '.', options = {}) {
       );
     }
     entries = await enumerateGitEntries(root, git.candidatePaths, git.trackedPaths);
-    collector.add('OR-META-003', '.git');
+    if (git.hasReachableHistory) collector.add('OR-BND-013', '.git');
     if (git.hasAuthorNames) collector.add('OR-META-001', '.git');
     if (git.hasAuthorEmails) collector.add('OR-META-002', '.git');
     for (const findingPath of git.unmergedPaths) {
@@ -157,6 +163,27 @@ export async function scanRepository(inputPath = '.', options = {}) {
           );
         }
       }
+    }
+
+    const maximumHistoryContentBytes = historyContentScanLimit(limits);
+    for (const size of git.historyBlobEntries.values()) {
+      if (size > maximumHistoryContentBytes) {
+        collector.add('OR-BND-014', '.git/history');
+      } else {
+        reserveContent(size);
+      }
+    }
+
+    for (const historical of readHistoryBlobs(root, git.historyBlobEntries, limits)) {
+      scanBufferContent(historical.buffer, '.git/history', (ruleId) => {
+        if (ruleId === 'OR-BND-003') {
+          collector.add('OR-BND-014', '.git/history');
+        } else if (ruleId.startsWith('OR-SEC-')) {
+          collector.add('OR-HIST-001', '.git/history');
+        } else if (ruleId.startsWith('OR-PRIV-')) {
+          collector.add('OR-HIST-002', '.git/history');
+        }
+      });
     }
   }
 

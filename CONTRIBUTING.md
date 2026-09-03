@@ -19,7 +19,7 @@ There are no runtime or development dependencies. Do not add one when a clear No
 - `bin/openready.js` is the executable entry point.
 - `src/cli.js` owns argument parsing and exit codes.
 - `src/scanner.js` coordinates a scan.
-- `src/git.js` validates local Git metadata, enumerates candidates, scans bounded current-index blobs, and aggregates author metadata.
+- `src/git.js` validates local Git metadata, enumerates candidates, reads bounded current-index and reachable-history blobs, and aggregates author metadata.
 - `src/files.js` enforces filesystem and symlink boundaries.
 - `src/rules.js` contains stable rule metadata and pure matching logic.
 - `src/content-scanner.js` reads bounded text content without following links.

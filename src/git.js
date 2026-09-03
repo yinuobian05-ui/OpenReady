@@ -26,6 +26,13 @@ function gitExecutableUnavailable() {
   );
 }
 
+function incompleteGitHistory() {
+  return new OpenReadyError(
+    'GIT_HISTORY_INCOMPLETE',
+    'Local refs-reachable history is shallow or grafted. Fetch non-shallow history and remove grafts before scanning.',
+  );
+}
+
 function ancestorRepositoryRoots(currentDirectory) {
   const roots = [];
   let candidate = currentDirectory;
@@ -327,6 +334,14 @@ async function rejectRedirectFile(targetPath) {
   }
 }
 
+async function rejectNonEmptyGrafts(targetPath) {
+  const stats = await optionalStats(targetPath);
+  if (!stats) return;
+  if (stats.isSymbolicLink() || !stats.isFile() || stats.size > 0) {
+    throw incompleteGitHistory();
+  }
+}
+
 async function preflightGitMetadata(root, limits) {
   const metadataRoot = path.join(root, '.git');
   await rejectMetadataSymlinks(metadataRoot, limits.maximumEntries);
@@ -337,6 +352,7 @@ async function preflightGitMetadata(root, limits) {
   await rejectRedirectFile(path.join(metadataRoot, 'config.worktree'));
   await rejectRedirectFile(path.join(metadataRoot, 'objects', 'info', 'alternates'));
   await rejectRedirectFile(path.join(metadataRoot, 'objects', 'info', 'http-alternates'));
+  await rejectNonEmptyGrafts(path.join(metadataRoot, 'info', 'grafts'));
 
   for (const relativePath of ['HEAD', 'index', 'packed-refs', 'info/exclude']) {
     const stats = await optionalStats(path.join(metadataRoot, relativePath));
@@ -428,6 +444,73 @@ function parseAuthors(buffer) {
   return { hasNames, hasEmails };
 }
 
+function parseReachableObjectIds(buffer, maximumEntries) {
+  const decoded = buffer.toString('ascii');
+  const lines = decoded.endsWith('\n')
+    ? decoded.slice(0, -1).split('\n')
+    : decoded.split('\n');
+  const objectIds = [];
+
+  for (const line of lines) {
+    if (!line) continue;
+    if (!/^[0-9a-f]{40,64}$/i.test(line)) throw unsafeGitMetadata();
+    objectIds.push(line.toLowerCase());
+    if (objectIds.length > maximumEntries) {
+      throw new OpenReadyError(
+        'SCAN_LIMIT_EXCEEDED',
+        'Scan safety limits were exceeded. No partial result was reported.',
+      );
+    }
+  }
+
+  return [...new Set(objectIds)].sort((left, right) => left.localeCompare(right, 'en'));
+}
+
+function inspectReachableHistory(root, indexEntries, limits) {
+  const shallow = runGit(root, ['rev-parse', '--is-shallow-repository'], limits)
+    .toString('ascii')
+    .trim();
+  if (shallow === 'true') throw incompleteGitHistory();
+  if (shallow !== 'false') throw unsafeGitMetadata();
+
+  const objectIds = parseReachableObjectIds(
+    runGit(root, ['rev-list', '--objects', '--all', '--no-object-names'], limits),
+    limits.maximumEntries,
+  );
+  if (objectIds.length === 0) {
+    return { hasReachableHistory: false, blobEntries: new Map() };
+  }
+
+  const input = Buffer.from(`${objectIds.join('\n')}\n`, 'ascii');
+  const output = runGit(
+    root,
+    ['cat-file', '--batch-check=%(objectname) %(objecttype) %(objectsize)'],
+    limits,
+    { input },
+  ).toString('ascii');
+  const lines = output.endsWith('\n') ? output.slice(0, -1).split('\n') : output.split('\n');
+  if (lines.length !== objectIds.length) throw unsafeGitMetadata();
+
+  const indexedObjectIds = new Set(
+    [...indexEntries.values()]
+      .map((entry) => entry.objectId?.toLowerCase())
+      .filter(Boolean),
+  );
+  const blobEntries = new Map();
+  for (let index = 0; index < objectIds.length; index += 1) {
+    const match = /^([0-9a-f]{40,64}) (blob|commit|tree|tag) (\d+)$/.exec(lines[index]);
+    const expectedObjectId = objectIds[index];
+    if (!match || match[1].toLowerCase() !== expectedObjectId) throw unsafeGitMetadata();
+    const size = Number(match[3]);
+    if (!Number.isSafeInteger(size) || size < 0) throw unsafeGitMetadata();
+    if (match[2] === 'blob' && !indexedObjectIds.has(expectedObjectId)) {
+      blobEntries.set(expectedObjectId, size);
+    }
+  }
+
+  return { hasReachableHistory: true, blobEntries };
+}
+
 function indexBlobEntries(indexEntries) {
   return [...indexEntries.entries()]
     .filter(([, entry]) => entry.mode.startsWith('100') || entry.mode === '120000')
@@ -471,6 +554,10 @@ function attachIndexBlobSizes(root, indexEntries, limits) {
 
 export function indexContentScanLimit(limits) {
   return Math.min(limits.contentScanBytes, Math.max(0, Math.floor(limits.gitMaxBufferBytes / 2)));
+}
+
+export function historyContentScanLimit(limits) {
+  return indexContentScanLimit(limits);
 }
 
 function parseBatchBlobs(output, requested) {
@@ -551,6 +638,42 @@ export function* readIndexBlobs(root, indexEntries, limits) {
   yield* flushChunk();
 }
 
+export function* readHistoryBlobs(root, historyBlobEntries, limits) {
+  const maximumBlobBytes = historyContentScanLimit(limits);
+  const chunkBudget = Math.max(1, Math.floor(limits.gitMaxBufferBytes / 2));
+  let chunk = [];
+  let chunkBytes = 0;
+
+  function flushChunk() {
+    if (chunk.length === 0) return [];
+    const input = Buffer.from(`${chunk.map((entry) => entry.objectId).join('\n')}\n`, 'ascii');
+    const output = runGit(root, ['cat-file', '--batch'], limits, { input });
+    const blobs = parseBatchBlobs(output, chunk);
+    const result = chunk.map((entry) => ({
+      ...entry,
+      buffer: blobs.get(entry.objectId),
+    }));
+    chunk = [];
+    chunkBytes = 0;
+    return result;
+  }
+
+  for (const [objectId, size] of historyBlobEntries) {
+    if (!/^[0-9a-f]{40,64}$/.test(objectId) || !Number.isSafeInteger(size) || size < 0) {
+      throw unsafeGitMetadata();
+    }
+    if (size > maximumBlobBytes) continue;
+    const entry = { objectId, size };
+    const estimatedBytes = size + 160;
+    if (chunk.length > 0 && chunkBytes + estimatedBytes > chunkBudget) {
+      yield* flushChunk();
+    }
+    chunk.push(entry);
+    chunkBytes += estimatedBytes;
+  }
+  yield* flushChunk();
+}
+
 export async function inspectGit(root, limits) {
   const metadataPath = path.join(root, '.git');
   let metadata;
@@ -565,7 +688,7 @@ export async function inspectGit(root, limits) {
   }
 
   if (!metadata.isDirectory() || metadata.isSymbolicLink()) {
-    return { isGit: false, unsupportedMetadata: true };
+    throw unsafeGitMetadata();
   }
 
   let metadataRealPath;
@@ -575,7 +698,7 @@ export async function inspectGit(root, limits) {
     throw unsafeGitMetadata();
   }
   if (path.dirname(metadataRealPath) !== root) {
-    return { isGit: false, unsupportedMetadata: true };
+    throw unsafeGitMetadata();
   }
 
   await preflightGitMetadata(root, limits);
@@ -602,6 +725,7 @@ export async function inspectGit(root, limits) {
     );
   }
   const indexEntries = attachIndexBlobSizes(root, parsedIndex.entries, limits);
+  const history = inspectReachableHistory(root, indexEntries, limits);
   const authors = parseAuthors(
     runGit(
       root,
@@ -616,6 +740,8 @@ export async function inspectGit(root, limits) {
     trackedPaths: new Set(tracked),
     candidatePaths: [...new Set(candidates)].sort((left, right) => left.localeCompare(right, 'en')),
     indexEntries,
+    historyBlobEntries: history.blobEntries,
+    hasReachableHistory: history.hasReachableHistory,
     unmergedPaths: parsedIndex.unmergedPaths,
     hasAuthorNames: authors.hasNames,
     hasAuthorEmails: authors.hasEmails,

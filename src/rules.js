@@ -46,9 +46,13 @@ export const RULES = Object.freeze({
     severity: 'WARNING',
     description: 'Reachable commits contain author emails; confirm those identities may be public.',
   }),
-  'OR-META-003': Object.freeze({
+  'OR-HIST-001': Object.freeze({
+    severity: 'BLOCKER',
+    description: 'Credential-shaped content was detected in reachable Git history; matched values, paths, commits, and object IDs are hidden.',
+  }),
+  'OR-HIST-002': Object.freeze({
     severity: 'WARNING',
-    description: 'Historical Git file contents were not scanned; use a history-aware secret scanner too.',
+    description: 'Privacy-shaped content was detected in reachable Git history; matched values, paths, commits, and object IDs are hidden.',
   }),
   'OR-ART-001': Object.freeze({
     severity: 'WARNING',
@@ -141,6 +145,14 @@ export const RULES = Object.freeze({
   'OR-BND-012': Object.freeze({
     severity: 'BLOCKER',
     description: 'Unmerged Git index entries prevent a reliable publication-readiness scan.',
+  }),
+  'OR-BND-013': Object.freeze({
+    severity: 'INFO',
+    description: 'Bounded inspection of text blobs reachable from local Git refs ran separately.',
+  }),
+  'OR-BND-014': Object.freeze({
+    severity: 'WARNING',
+    description: 'A reachable historical Git blob was binary or exceeded the text-content limit and was not fully inspected.',
   }),
 });
 

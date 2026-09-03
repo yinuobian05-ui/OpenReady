@@ -6,6 +6,7 @@ import {
   chmod,
   mkdir,
   readFile,
+  rm,
   writeFile,
 } from 'node:fs/promises';
 import path from 'node:path';
@@ -17,6 +18,8 @@ import {
   createSyntheticRepository,
   initializeGit,
   makeTemporaryWorkspace,
+  runFixtureGit,
+  syntheticValues,
 } from './fixtures/synthetic-repository.js';
 
 const BIN = fileURLToPath(new URL('../bin/openready.js', import.meta.url));
@@ -149,6 +152,63 @@ test('text output reports rules without exposing matched values', async () => {
   }
 });
 
+test('history findings expose no secret, identity, commit, blob, path, or line details', async () => {
+  const fixture = await makeTemporaryWorkspace();
+  const values = syntheticValues();
+  const identity = {
+    GIT_AUTHOR_NAME: values.authorName,
+    GIT_AUTHOR_EMAIL: values.email,
+    GIT_COMMITTER_NAME: values.authorName,
+    GIT_COMMITTER_EMAIL: values.email,
+  };
+  try {
+    await initializeGit(fixture.root);
+    const secretPath = path.join(fixture.root, 'deleted-history-secret.txt');
+    await writeFile(secretPath, `${values.token}\n`);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Add CLI history fixture'], identity);
+    const secretCommit = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+    const secretBlob = runFixtureGit(
+      fixture.root,
+      ['rev-parse', 'HEAD:deleted-history-secret.txt'],
+    ).trim();
+    await rm(secretPath);
+    runFixtureGit(fixture.root, ['add', '--all']);
+    runFixtureGit(fixture.root, ['commit', '--quiet', '-m', 'Remove CLI history fixture'], identity);
+    const currentCommit = runFixtureGit(fixture.root, ['rev-parse', 'HEAD']).trim();
+
+    const jsonRun = runCli(['scan', fixture.root, '--json']);
+    const textRun = runCli(['scan', fixture.root]);
+    assert.equal(jsonRun.status, 1, jsonRun.stderr);
+    assert.equal(textRun.status, 1, textRun.stderr);
+    const result = JSON.parse(jsonRun.stdout);
+    const historicalFinding = result.findings.find(
+      (finding) => finding.ruleId === 'OR-HIST-001',
+    );
+    assert.deepEqual(
+      Object.keys(historicalFinding).sort(),
+      ['description', 'path', 'ruleId', 'severity'],
+    );
+    assert.equal(historicalFinding.path, '.git/history');
+    assert.match(textRun.stdout, /OR-HIST-001 \.git\/history/);
+
+    const exposedOutputs = [jsonRun.stdout, jsonRun.stderr, textRun.stdout, textRun.stderr];
+    for (const hidden of [
+      values.token,
+      values.authorName,
+      values.email,
+      secretCommit,
+      secretBlob,
+      currentCommit,
+      'deleted-history-secret.txt',
+    ]) {
+      assert.equal(exposedOutputs.some((output) => output.includes(hidden)), false);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('an execution error exits two with one JSON error document', async () => {
   const fixture = await makeTemporaryWorkspace();
   try {
@@ -207,7 +267,7 @@ test('synthetic demo completes without reading or changing the current directory
     assert.match(run.stdout, /repository you are authorized to inspect/i);
     assert.match(
       run.stdout,
-      /npx --yes "@yb5\/openready@0\.2\.1" scan \./,
+      /npx --yes "@yb5\/openready@0\.3\.0" scan \./,
     );
     assert.match(run.stdout, /issues\/new\?template=first_run_feedback\.yml/);
     assert.equal(await readFile(sentinelPath, 'utf8'), sentinelContent);

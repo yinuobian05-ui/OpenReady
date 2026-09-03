@@ -6,6 +6,24 @@ The format follows Keep a Changelog principles, and this project uses Semantic V
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-03
+
+### Added
+
+- Added a bounded scan of raw text blobs reachable from local Git refs so credential-shaped content removed from the working tree and index can still block publication.
+- Added aggregate `OR-HIST-001` and `OR-HIST-002` findings at `.git/history` without exposing historical filenames, lines, commits, object IDs, matched values, or snippets.
+- Added regressions for deleted historical credentials, object de-duplication, byte-budget failure, shallow repositories, nonempty grafts, unborn repositories, and CLI output redaction.
+
+### Changed
+
+- Shallow repositories and nonempty Git grafts now fail closed with `GIT_HISTORY_INCOMPLETE` instead of producing a partial history result.
+- Reachable historical blobs share the existing entry, content-byte, and finding budgets; each Git subprocess retains the existing output limit and per-command timeout. Binary and over-limit historical blobs produce `OR-BND-014` for manual review.
+- The staged-publish workflow now checks out complete tag history before the source self-scan.
+
+### Fixed
+
+- Git linked worktrees, separate Git directories, and other unsupported `.git` layouts now fail closed with `GIT_METADATA_UNSAFE` instead of falling back to a filesystem-only scan that could return `READY` without checking the index or reachable history.
+
 ## [0.2.1] - 2026-08-27
 
 ### Added

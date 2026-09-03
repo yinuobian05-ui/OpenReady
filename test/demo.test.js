@@ -80,7 +80,7 @@ test('demo uses only the fixed fictional file set and removes it after scanning'
     });
 
     assert.equal(result.status, 'BLOCKED');
-    assert.deepEqual(result.summary, { blockers: 4, warnings: 5, info: 1 });
+    assert.deepEqual(result.summary, { blockers: 4, warnings: 4, info: 1 });
     assert.deepEqual(await readdir(tempBase), []);
   } finally {
     for (const key of environmentKeys) {

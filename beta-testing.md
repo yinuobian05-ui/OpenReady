@@ -2,7 +2,9 @@
 
 ## Current status
 
-Human beta testing was intentionally skipped for the v0.1.0 release and was not a release prerequisite. No human beta runs, participants, or usage evidence are claimed. This file is retained only as an optional future evidence template.
+Human beta testing was intentionally skipped for the v0.1.0 release and was not a release prerequisite. No human beta run, independent synthetic demo run, participant, or usage evidence is currently claimed. One external reviewer has now provided attributable product feedback without running the package; that is feedback evidence, not a user or run.
+
+On 2026-08-31, Reddit user `Capable-Property-539` declined to run an unfamiliar `npx` package on a primary machine and explained that the first-run request required too much trust. The same reply correctly identified that v0.2.1 scanned the working tree and current index but not historical file blobs, so a credential deleted after an earlier commit could remain publishable. The [public reply](https://old.reddit.com/r/alphaandbetausers/comments/1vuco5a/happy_to_beta_test_your_product_ill_use_it_and/p6zefnj/) is one concrete external feedback item. It is not a verified execution, adoption event, testimonial, or endorsement.
 
 If genuine volunteers become available later, a useful optional target is 3–5 people who are developers or regularly use Git. Each participant must run the tool on a repository they are permitted to inspect and give feedback based on that real run. Do not recruit or invent participants merely to fill this template.
 
@@ -13,7 +15,7 @@ Three independent AI roles performed a synthetic pre-release evaluation of the C
 Someone can first confirm that the package runs and that the redacted output is understandable without scanning personal files:
 
 ```sh
-npx --yes "@yb5/openready@0.2.1" demo
+npx --yes "@yb5/openready@0.3.0" demo
 ```
 
 The command creates only fixed fictional files in a unique operating-system temporary directory, scans them locally, and removes that exact directory. Its expected synthetic `BLOCKED` result demonstrates rule categories; successful demo completion exits `0`.
@@ -116,23 +118,25 @@ For each actionable result:
 | 2026-08-15 | GitHub and npm | Published v0.2.0 from merged commit `c360d368` after the five-platform public CI matrix passed. | [Pull request #7](https://github.com/yinuobian05-ui/OpenReady/pull/7), [main CI](https://github.com/yinuobian05-ui/OpenReady/actions/runs/31858423405), [GitHub release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.2.0), [npm package](https://www.npmjs.com/package/@yb5/openready/v/0.2.0) | The annotated tag, GitHub Release, registry metadata, `latest` dist-tag, 23-file public tarball, fresh unauthenticated install, CLI version, synthetic demo, installed-package scan, and zero-vulnerability npm audit were independently verified. No independent run, feedback, user, adoption, review, or impact is claimed. |
 | 2026-08-27 | GitHub and npm | Published v0.2.1 from tagged commit `1211f256` after the five-platform CI matrix passed. | [Pull request #11](https://github.com/yinuobian05-ui/OpenReady/pull/11), [tag CI](https://github.com/yinuobian05-ui/OpenReady/actions/runs/33036405450), [staging run](https://github.com/yinuobian05-ui/OpenReady/actions/runs/33036405432), [workflow fix #12](https://github.com/yinuobian05-ui/OpenReady/pull/12), [GitHub Release](https://github.com/yinuobian05-ui/OpenReady/releases/tag/v0.2.1), [npm package](https://www.npmjs.com/package/@yb5/openready/v/0.2.1) | The tag staging run passed all 57 tests and the package audit but published nothing because the source self-scan rejected inactive checkout-generated Git metadata. The exact tagged commit was staged locally and approved through npm's separate 2FA gate. Registry metadata, `latest`, the annotated tag, GitHub Release, 23-file tarball, byte-for-byte file match, fresh unauthenticated version check, synthetic demo, and downloaded-package scan were then verified. No independent run, feedback, user, adoption, review, or impact is claimed. |
 | 2026-08-27 | Reddit r/ChatGPTCoding | Posted one disclosed maintainer comment in the current Weekly Self Promotion Thread inviting developers to try the pinned v0.2.1 synthetic demo and share one privacy-safe usability observation. | [Public comment](https://old.reddit.com/r/ChatGPTCoding/comments/1vwwbap/weekly_self_promotion_thread/p65kw3j/) | Posted successfully; no independent run, reply, feedback, issue, pull request, star, user, adoption, review, or impact is claimed at record time. |
+| 2026-09-01 | Reddit r/alphaandbetausers | Recorded the first attributable external product feedback after an invited tester declined to run an unfamiliar `npx` package and identified the unscanned historical-blob gap. | [Public reply](https://old.reddit.com/r/alphaandbetausers/comments/1vuco5a/happy_to_beta_test_your_product_ill_use_it_and/p6zefnj/) | One real feedback item is verified; the reviewer explicitly did not run the package, so verified runs and users remain 0. A local v0.3.0 candidate now addresses the historical text-blob gap, but it has not been committed, pushed, or published. |
 
 ## Metrics state
 
-Stars, forks, subscribers, issues, pull requests, Discussions comments, release state, and the 2026-08-26/27 npm download buckets were refreshed on 2026-08-27 at 12:46 UTC+8. Older download and GitHub traffic details retain their earlier snapshot dates. Metrics can lag and must not be inferred forward.
+Stars, forks, subscribers, issues, pull requests, Discussions comments, release state, and the latest available daily traffic/download buckets were refreshed on 2026-09-01 at 20:30 UTC+8. Daily buckets are not exact rolling-24-hour measurements and must not be inferred as attributable use.
 
 | Signal | Current evidence |
 | --- | --- |
 | Real beta runs | Intentionally skipped for v0.1.0; 0 verified runs |
 | Independent synthetic demo runs | 0 verified runs; maintained separately from real-repository testing |
 | Public users | 0 verified users |
-| Downloads | npm's explicit-date API reports 75 downloads on 2026-08-11, 0 on 2026-08-12, 174 on 2026-08-13, 0 on 2026-08-14, 0 on 2026-08-26, and 0 on the incomplete 2026-08-27 bucket at snapshot time. Download events do not prove users and may include maintainer or automated registry activity. |
+| External feedback | 1 attributable product-feedback reply; the reviewer explicitly did not run the package |
+| Downloads | npm's daily API reports 0 downloads on 2026-08-31 and 0 on the incomplete 2026-09-01 bucket at snapshot time. Download events do not prove users and may include maintainer or automated registry activity. |
 | Stars / forks / watchers | 2 stars / 0 forks / 0 actual Watch subscribers from GitHub. Stars are not counted as verified users. |
-| Public issues / pull requests | 0 open issues; 0 external pull requests; 10 merged maintainer pull requests and 1 open maintainer pull request (#11) at snapshot time |
-| GitHub traffic | The owner traffic endpoint reports 6 views / 3 unique visitors and 194 clones / 76 unique cloners across its current 14-day window. Its latest complete daily bucket, 2026-08-13, reports 1 view / 1 unique visitor and 89 clones / 44 unique cloners. This traffic is unattributed and is not counted as verified user adoption. |
+| Public issues / pull requests | 0 open issues and 0 external pull requests; the preceding 24 hours added 0 issues, pull requests, or commits |
+| GitHub traffic | The 2026-08-31 daily bucket reports 1 view / 1 unique visitor and 13 clones / 13 unique cloners. This traffic is unattributed and is not counted as verified use or adoption. |
 | GitHub Discussions | 1 launch announcement and 0 comments. Reactions were not refreshed; the earlier snapshot recorded 1 unattributed upvote. |
 | Open-source directory requests | 2 form submission acknowledgements; 1 open awesome-cli-apps-in-a-csv request with 0 comments; 0 accepted listings verified |
 | Published releases | GitHub v0.1.0, v0.1.1, v0.1.2, v0.2.0, and v0.2.1; npm `latest` is v0.2.1 |
-| Maintenance checks | The v0.2.1 release commit passed the public CI matrix on Ubuntu with Node.js 20, 22, and 24, and on macOS and Windows with Node.js 20. The tag staging run passed all 57 tests and its 23-file package audit, then stopped before staging when the self-scan rejected inactive checkout-generated Git metadata. Pull request #12 fixed that future workflow path and passed the same matrix. The exact v0.2.1 tag was staged locally and separately 2FA-approved. Its public tarball contains 23 files, every downloaded file matches the tag, a fresh unauthenticated run reported `0.2.1`, the synthetic demo completed with its expected 4 blockers, 5 warnings, and 1 info and removed its temporary files, and the downloaded-package scan returned `READY` with 0 blockers, 0 warnings, and 1 info. |
+| Maintenance checks | Public v0.2.1 remains verified with green five-platform CI. The local v0.3.0 history-scan candidate reported 69 tests: 68 passed, 0 failed, and 1 platform-limited skip; linked-worktree and separate-Git-directory regressions fail closed as intended. Its 24-file package dry-run, non-shallow full-history source scan, temporary packed-package version check, synthetic demo, and unpacked-package scan passed. The candidate is not committed, pushed, staged, or published. |
 
 These fields must remain explicit rather than being estimated or backfilled.
